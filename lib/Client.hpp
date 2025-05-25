@@ -1,15 +1,19 @@
 #ifndef _CLIENT_H_
 # define _CLIENT_H_
 
-# include "APollable.hpp"
+# include "IPollable.hpp"
 
-class Client: public APollable {
+class Client: public IPollable {
 public:
 	Client() = delete;
-	~Client();
 	Client(int fd);
+	Client(const Client &cpy);
+	~Client();
 
-	int get_fd(void) const override;
+	Client &operator=(const Client &rhs);
+
+	int	get_fd(void) const noexcept override;
+	int	handle_poll(void) noexcept override;
 private:
 	int	_fd;
 };

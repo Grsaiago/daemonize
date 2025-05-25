@@ -1,7 +1,7 @@
 CC = g++
-CFLAGS = -g -Wall -Wextra -Werror
+CFLAGS = -g -Wall -Wextra -Werror --std=c++11
 
-NAME = a.out
+NAME = matt-daemon
 
 SRC_DIR = src
 OBJ_DIR = obj
@@ -28,7 +28,7 @@ clean: ## Deletes transitive dependencies
 fclean: clean ## Deletes transitive dependencies + the executable
 	@rm -f $(NAME)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@$(CC) $(CFLAGS) -c $(CFLAGS) $< -o $@
 
 $(NAME): $(OBJS)

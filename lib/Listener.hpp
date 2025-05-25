@@ -1,15 +1,19 @@
 #ifndef _LISTENER_H_
 # define _LISTENER_H_
 
-# include "APollable.hpp"
+# include "IPollable.hpp"
 # include <iostream>
 
-class Listener: public APollable {
+class Listener: public IPollable {
 public:
 	Listener();
+	Listener(const Listener &cpy);
 	~Listener();
 
-	int get_fd(void) const override;
+	Listener &operator=(const Listener &rhs);
+
+	int	get_fd(void) const override;
+	int	handle_poll(void) noexcept override;
 private:
 	int	_fd;
 };

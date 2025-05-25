@@ -3,29 +3,36 @@
 
 # include "../lib/Listener.hpp"
 # include "../lib/Client.hpp"
+# include <array>
 # include <memory>
-# include <vector>
+# include <cstdio>
+# include <fcntl.h>
+# include <cerrno>
+# include "../lib/Error.hpp"
 
 class Server {
 public:
 	Server();
+	Server(const Server &cpy);
 	~Server();
 
+	Server &operator=(const Server &rhs);
+
 	int	get_lockfile_fd() const;
-	void	set_lockfile_fd(int new_fd);
 
 	static const std::string lockfile_path;
 	static const std::string lockfile_name;
+	static const std::string lockfile_fullpath;
 private:
 	int					_lockfile_fd;
 	int					_epoll_fd;
-	std::vector<std::unique_ptr<Client>>	_clients;
+	std::array<std::unique_ptr<Client>, 3>	_clients;
 	Listener				_listener;
 
-	int	open_lockfile();
-	void	delete_lockfile();
-	int	lock_lockfile() const;
-	int	unlock_lockfile() const;
+	Result<int>	open_lockfile();
+	void		delete_lockfile();
+	int		lock_lockfile() const;
+	int		unlock_lockfile() const;
 };
 
 #endif // !_SERVER_H_
