@@ -5,7 +5,8 @@
 
 class Error {
 public:
-	std::string	reason;
+	Error(std::string reason) : reason(reason) {}
+	const std::string	reason;
 };
 
 enum class ResultStates {
@@ -23,6 +24,8 @@ public:
 
 	bool	is_ok(void) const noexcept;
 	bool	is_err(void) const noexcept;
+	T	get_ok() noexcept(false);
+	Error	get_err() noexcept(false);
 private:
 	Result();
 	ResultStates	current_state;

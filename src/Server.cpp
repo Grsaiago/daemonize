@@ -1,41 +1,84 @@
 #include "../lib/Server.hpp"
+#include <optional>
 
 const std::string Server::lockfile_path = std::string("/var/lock/");
 const std::string Server::lockfile_name = std::string("matt_daemon.lock");
 const std::string Server::lockfile_fullpath = Server::lockfile_path + Server::lockfile_name;
 
-Server::Server(): _lockfile_fd(-1), _epoll_fd(-1) {
-	this->open_lockfile();
+Server::Server() noexcept(false) : _lockfile_fd(-1), _epoll_fd(-1) {
+	auto result = this->open_lockfile();
+	if (result.has_value()) {
+		throw std::logic_error(result.value().reason);
+	}
+	return;
 }
 
-Server::~Server() {}
+Server::~Server() noexcept(false) {
+	auto result = this->close_lockfile();
+	if (result.has_value()) {
+		throw std::logic_error(result.value().reason);
+	}
+	return;
+}
 
 int	Server::get_lockfile_fd() const {
 	return (this->_lockfile_fd);
 }
 
-Result<int>	Server::open_lockfile() {
-	int	lock_fd;
-
-	lock_fd = open(Server::lockfile_fullpath.c_str(), O_CREAT, O_EXCL, O_RDWR);
-	if (lock_fd < 0) {
+std::optional<Error>	Server::open_lockfile() {
+	// create file
+	this->_lockfile_fd = open(
+		Server::lockfile_fullpath.c_str(),
+		O_CREAT // create the file
+		| O_EXCL // error if the file already exists
+		| O_NONBLOCK // not block on trying to acquire lock
+		| O_WRONLY, // open the file in write only
+		S_IWUSR | S_IRUSR // User permission to read and write */
+		| S_IRGRP | S_IROTH // Others and Group have read permission */
+	);
+	if (this->_lockfile_fd < 0) {
 		if (errno == EEXIST) {
-
+			return (std::optional<Error>("file already exists"));
 		} else {
-			return (Result<int>::Err("file already exists"));
+			return (std::optional<Error>(strerror(errno)));
 		}
 	}
-	return (Result<int>::Ok(lock_fd));
+	//lock file
+	if (flock(this->_lockfile_fd, LOCK_EX | LOCK_NB) < 0) {
+		if (errno == EWOULDBLOCK) {
+			return (std::optional<Error>("the lock is already in place by another instance of Server"));
+		}
+		return (std::optional<Error>(strerror(errno)));
+	}
+	// write my pid in the file
+	std::string	pid = std::to_string(getpid());
+	write(this->_lockfile_fd, pid.c_str(), pid.length());
+	return (std::nullopt);
 }
 
-void	Server::delete_lockfile() {
-
+std::optional<Error>	Server::close_lockfile() {
+	if (this->_lockfile_fd < 0) {
+		return (std::optional<Error>("this Server instance doesn't have a handle to the file"));
+	}
+	// try to unlock file
+	if (flock(this->_lockfile_fd, LOCK_UN | LOCK_NB) < 0) {
+		if (errno == EWOULDBLOCK) {
+			return (std::optional<Error>("cannot unlock file: lock is in place by another instance of Server"));
+		}
+		return (std::optional<Error>(strerror(errno)));
+	}
+	// delete the file
+	if (unlink(Server::lockfile_fullpath.c_str()) != 0) {
+		return (std::optional<Error>(strerror(errno)));
+	}
+	return (std::nullopt);
 }
 
-int	Server::lock_lockfile() const {
+std::optional<Error>	Server::daemonize(void) noexcept {
+	switch (fork()) {
+		case (0): break;
+		default: exit(0);
+	}
 
-}
-
-int	Server::unlock_lockfile() const {
-
+	return (std::nullopt);
 }

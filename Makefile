@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -g -Wall -Wextra -Werror --std=c++11
+CFLAGS = -g -Wall -Wextra -Werror --std=c++17
 
 NAME = matt-daemon
 
