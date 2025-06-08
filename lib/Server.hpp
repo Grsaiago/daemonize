@@ -17,10 +17,8 @@
 
 class Server {
 public:
-	[[nodiscard]]	static Server *const	get_instance() noexcept;
+	[[nodiscard]]	static Server *get_instance() noexcept;
 	~Server() noexcept(false);
-
-	[[nodiscard]] uint8_t		get_active_clients() const noexcept;
 
 	[[nodiscard]] std::optional<Error>	listen_and_serve() noexcept;
 	[[nodiscard]] std::optional<Error>	add_new_client(Client &new_client) noexcept;
@@ -31,7 +29,6 @@ private:
 
 	int					_epoll_fd;
 	std::array<std::optional<Client>, 3>	_clients;
-	uint8_t					_active_clients;
 	Listener				_listener;
 	static Server				*_instance;
 };

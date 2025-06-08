@@ -1,21 +1,17 @@
 #include "../lib/Server.hpp"
-#include "../lib/daemonize.hpp"
+#include "../lib/DaemonManager.hpp"
+#include <new>
 
 int main(void) {
-	Server		*ptr;
 	std::string	input;
+	DaemonManager *const daemon_manager = new(std::nothrow) DaemonManager();
 
-	if (Server::lockfile_exists()) {
-		std::cerr << "File already exists" << std::endl;
-		return (EXIT_FAILURE);
-	}
-	ptr = Server::get_instance();
-	if (ptr == nullptr) {
-		return (EXIT_FAILURE);
+	if (daemon_manager == nullptr) {
+		std::cerr << "Failed to create the daemon manager" << std::endl;
 	}
 
 	std::getline(std::cin, input);
 
-	delete ptr;
+	delete (daemon_manager);
 	return (EXIT_SUCCESS);
 }

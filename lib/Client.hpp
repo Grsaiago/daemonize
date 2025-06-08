@@ -2,6 +2,7 @@
 # define _CLIENT_H_
 
 # include "IPollable.hpp"
+#include <optional>
 
 class Client: public IPollable {
 public:
@@ -12,8 +13,8 @@ public:
 
 	Client &operator=(const Client &rhs);
 
-	int	get_fd(void) const noexcept override;
-	int	handle_poll(void) noexcept override;
+	int			get_fd(void) const noexcept override;
+	std::optional<Error>	handle_poll(void) noexcept override;
 private:
 	int	_fd;
 };

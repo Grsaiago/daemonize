@@ -5,6 +5,9 @@ const std::string DaemonManager::lockfile_name = std::string("matt_daemon.lock")
 const std::string DaemonManager::lockfile_fullpath = DaemonManager::lockfile_path + DaemonManager::lockfile_name;
 
 DaemonManager::DaemonManager() noexcept(false) {
+	if (access(DaemonManager::lockfile_fullpath.c_str(), F_OK) == 0) {
+		throw std::logic_error("lockfile already exists");
+	}
 	auto result = this->open_lockfile();
 	if (result.has_value()) {
 		throw std::logic_error(result.value().reason);
@@ -77,8 +80,9 @@ bool	DaemonManager::lockfile_exists() noexcept {
 }
 
 /*
- * Make the process a daemon as described in the chapter 37.2 (creating a daemon) of the "The Linux Programming Interface"
- * */
+ * Make the process a daemon as described in the
+ * chapter 37.2 (creating a daemon) of the "The Linux Programming Interface"
+ */
 std::optional<Error>	DaemonManager::daemonize(void) const noexcept {
 	int	dev_null_fd;
 

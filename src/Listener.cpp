@@ -8,6 +8,6 @@ int	Listener::get_fd() const {
 	return (this->_fd);
 }
 
-int	Listener::handle_poll(void) noexcept {
-	return (0);
+std::optional<Error>	Listener::handle_poll(void) noexcept {
+	return (std::nullopt);
 }

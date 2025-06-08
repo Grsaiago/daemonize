@@ -2,7 +2,7 @@
 
 Server *Server::_instance = nullptr;
 
-Server *const	Server::get_instance() noexcept {
+Server *Server::get_instance() noexcept {
 	if (Server::_instance == nullptr) {
 		Server::_instance = new(std::nothrow) Server();
 	}
@@ -24,12 +24,8 @@ Server::~Server() noexcept(false) {
 	return;
 }
 
-uint8_t	Server::get_active_clients() const noexcept {
-	return (this->_active_clients);
-}
-
 std::optional<Error>	Server::add_new_client(Client &new_client) noexcept {
-
+	(void)new_client;
 	return (std::nullopt);
 }
 
