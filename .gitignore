@@ -31,3 +31,4 @@
 *.out
 *.app
 matt-daemon
+test_suite
