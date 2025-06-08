@@ -1,22 +1,44 @@
 #include "../lib/Server.hpp"
-#include <optional>
 
 const std::string Server::lockfile_path = std::string("/var/lock/");
 const std::string Server::lockfile_name = std::string("matt_daemon.lock");
 const std::string Server::lockfile_fullpath = Server::lockfile_path + Server::lockfile_name;
+Server *Server::_instance = nullptr;
+
+Server *const	Server::get_instance() noexcept {
+	if (Server::_instance == nullptr) {
+		Server::_instance = new(std::nothrow) Server();
+	}
+	return (Server::_instance);
+}
 
 Server::Server() noexcept(false) : _lockfile_fd(-1), _epoll_fd(-1) {
 	auto result = this->open_lockfile();
 	if (result.has_value()) {
 		throw std::logic_error(result.value().reason);
 	}
+
+	this->_epoll_fd = epoll_create(3);
+	if (this->_epoll_fd == -1) {
+		throw std::logic_error(strerror(errno));
+	}
 	return;
+}
+
+/*
+ * Checks if the lockfile exists
+ * */
+bool	Server::lockfile_exists() noexcept {
+	return (access(Server::lockfile_fullpath.c_str(), F_OK) == 0);
 }
 
 Server::~Server() noexcept(false) {
 	auto result = this->close_lockfile();
 	if (result.has_value()) {
 		throw std::logic_error(result.value().reason);
+	}
+	if (this->_epoll_fd != -1) {
+		close(this->_epoll_fd);
 	}
 	return;
 }
@@ -74,11 +96,7 @@ std::optional<Error>	Server::close_lockfile() {
 	return (std::nullopt);
 }
 
-std::optional<Error>	Server::daemonize(void) noexcept {
-	switch (fork()) {
-		case (0): break;
-		default: exit(0);
-	}
+std::optional<Error>	Server::listen_and_serve() noexcept {
 
 	return (std::nullopt);
 }
