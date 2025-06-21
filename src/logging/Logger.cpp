@@ -1,8 +1,17 @@
 #include "../../lib/logging/Logger.hpp"
+#include <memory>
 Logger *Logger::_instance = nullptr;
 
-Logger::Logger(LogLevel level, LogHandler &handler)
+Logger::Logger(LogLevel level, std::unique_ptr<LogHandler> handler)
 	: handler(handler), level(level) {}
+
+Logger::~Logger() {
+	if (Logger::_instance == nullptr) {
+		return;
+	}
+	delete Logger::_instance;
+	return;
+}
 
 void Logger::init_with_level(LogLevel level, LogHandler &handler) noexcept {
 	Logger::_instance = new Logger(level, handler);

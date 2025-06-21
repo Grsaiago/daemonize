@@ -5,6 +5,12 @@
 #include <new>
 
 int main(void) {
+	TinTinReporter *ptr = new TinTinReporter();
+
+	Logger::info("Essa mensagem aqui não deveria aparecer e nem crashar");
+	Logger::init_with_level(LogLevel::INFO, *ptr);
+	Logger::info("Essa mensagem aqui em");
+	return (EXIT_SUCCESS);
 	std::string input;
 	DaemonManager *const daemon_manager = new (std::nothrow) DaemonManager();
 

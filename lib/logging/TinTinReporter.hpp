@@ -2,6 +2,7 @@
 #define _TIN_TIN_REPORTER_H_
 
 #include "LogHandler.hpp"
+#include <iostream>
 
 class TinTinReporter : public LogHandler {
   public:
