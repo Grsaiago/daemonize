@@ -9,7 +9,9 @@ SRC_DIR = src
 OBJ_DIR = obj
 TEST_DIR = tests
 
-SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+SRCS = $(wildcard $(SRC_DIR)/*.cpp) \
+       $(wildcard $(SRC_DIR)/logging/*.cpp) \
+
 OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 TESTS = $(wildcard $(TEST_DIR)/*.cpp)
 

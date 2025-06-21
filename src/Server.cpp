@@ -4,7 +4,7 @@ Server *Server::_instance = nullptr;
 
 Server *Server::get_instance() noexcept {
 	if (Server::_instance == nullptr) {
-		Server::_instance = new(std::nothrow) Server();
+		Server::_instance = new (std::nothrow) Server();
 	}
 	return (Server::_instance);
 }
@@ -24,11 +24,11 @@ Server::~Server() noexcept(false) {
 	return;
 }
 
-std::optional<Error>	Server::add_new_client(Client &new_client) noexcept {
+std::optional<Error> Server::add_new_client(Client &new_client) noexcept {
 	(void)new_client;
 	return (std::nullopt);
 }
 
-std::optional<Error>	Server::listen_and_serve() noexcept {
+std::optional<Error> Server::listen_and_serve() noexcept {
 	return (std::nullopt);
 }

@@ -1,36 +1,38 @@
 #ifndef _SERVER_H_
-# define _SERVER_H_
+#define _SERVER_H_
 
-# include "../lib/Listener.hpp"
-# include "../lib/Client.hpp"
-# include "../lib/Error.hpp"
-# include <array>
-# include <optional>
-# include <cstdio>
-# include <cstring>
-# include <cerrno>
-# include <unistd.h>
-# include <fcntl.h>
-# include <sys/file.h>
-# include <sys/stat.h>
-# include <sys/epoll.h>
+#include "../lib/Client.hpp"
+#include "../lib/Error.hpp"
+#include "../lib/Listener.hpp"
+#include <array>
+#include <cerrno>
+#include <cstdio>
+#include <cstring>
+#include <fcntl.h>
+#include <optional>
+#include <sys/epoll.h>
+#include <sys/file.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 class Server {
-public:
-	[[nodiscard]]	static Server *get_instance() noexcept;
+  public:
+	[[nodiscard]] static Server *get_instance() noexcept;
 	~Server() noexcept(false);
 
-	[[nodiscard]] std::optional<Error>	listen_and_serve() noexcept;
-	[[nodiscard]] std::optional<Error>	add_new_client(Client &new_client) noexcept;
-private:
+	[[nodiscard]] std::optional<Error> listen_and_serve() noexcept;
+	[[nodiscard]] std::optional<Error>
+	add_new_client(Client &new_client) noexcept;
+
+  private:
 	Server(const Server &cpy) noexcept(false);
 	Server() noexcept(false);
 	Server &operator=(const Server &rhs);
 
-	int					_epoll_fd;
-	std::array<std::optional<Client>, 3>	_clients;
-	Listener				_listener;
-	static Server				*_instance;
+	int _epoll_fd;
+	std::array<std::optional<Client>, 3> _clients;
+	Listener _listener;
+	static Server *_instance;
 };
 
 #endif // !_SERVER_H_

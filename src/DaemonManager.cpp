@@ -1,8 +1,10 @@
 #include "../lib/DaemonManager.hpp"
 
 const std::string DaemonManager::lockfile_path = std::string("/var/lock/");
-const std::string DaemonManager::lockfile_name = std::string("matt_daemon.lock");
-const std::string DaemonManager::lockfile_fullpath = DaemonManager::lockfile_path + DaemonManager::lockfile_name;
+const std::string DaemonManager::lockfile_name =
+	std::string("matt_daemon.lock");
+const std::string DaemonManager::lockfile_fullpath =
+	DaemonManager::lockfile_path + DaemonManager::lockfile_name;
 
 DaemonManager::DaemonManager() noexcept(false) {
 	if (access(DaemonManager::lockfile_fullpath.c_str(), F_OK) == 0) {
@@ -21,17 +23,17 @@ DaemonManager::~DaemonManager() noexcept(false) {
 	}
 }
 
-std::optional<Error>	DaemonManager::open_lockfile() {
+std::optional<Error> DaemonManager::open_lockfile() {
 	// create file
-	this->_lockfile_fd = open(
-		DaemonManager::lockfile_fullpath.c_str(),
-		O_CREAT // create the file
-		| O_EXCL // error if the file already exists
-		| O_NONBLOCK // not block on trying to acquire lock
-		| O_WRONLY, // open the file in write only
-		S_IWUSR | S_IRUSR // User permission to read and write */
-		| S_IRGRP | S_IROTH // Others and Group have read permission */
-	);
+	this->_lockfile_fd =
+		open(DaemonManager::lockfile_fullpath.c_str(),
+			 O_CREAT				 // create the file
+				 | O_EXCL			 // error if the file already exists
+				 | O_NONBLOCK		 // not block on trying to acquire lock
+				 | O_WRONLY,		 // open the file in write only
+			 S_IWUSR | S_IRUSR		 // User permission to read and write */
+				 | S_IRGRP | S_IROTH // Others and Group have read permission */
+		);
 	if (this->_lockfile_fd < 0) {
 		if (errno == EEXIST) {
 			return (std::optional<Error>("file already exists"));
@@ -39,27 +41,30 @@ std::optional<Error>	DaemonManager::open_lockfile() {
 			return (std::optional<Error>(strerror(errno)));
 		}
 	}
-	//lock file
+	// lock file
 	if (flock(this->_lockfile_fd, LOCK_EX | LOCK_NB) < 0) {
 		if (errno == EWOULDBLOCK) {
-			return (std::optional<Error>("the lock is already in place by another instance of Server"));
+			return (std::optional<Error>(
+				"the lock is already in place by another instance of Server"));
 		}
 		return (std::optional<Error>(strerror(errno)));
 	}
 	// write my pid in the file
-	std::string	pid = std::to_string(getpid());
+	std::string pid = std::to_string(getpid());
 	write(this->_lockfile_fd, pid.c_str(), pid.length());
 	return (std::nullopt);
 }
 
-std::optional<Error>	DaemonManager::close_lockfile() {
+std::optional<Error> DaemonManager::close_lockfile() {
 	if (this->_lockfile_fd < 0) {
-		return (std::optional<Error>("this Server instance doesn't have a handle to the file"));
+		return (std::optional<Error>(
+			"this Server instance doesn't have a handle to the file"));
 	}
 	// try to unlock file
 	if (flock(this->_lockfile_fd, LOCK_UN | LOCK_NB) < 0) {
 		if (errno == EWOULDBLOCK) {
-			return (std::optional<Error>("cannot unlock file: lock is in place by another instance of Server"));
+			return (std::optional<Error>("cannot unlock file: lock is in place "
+										 "by another instance of Server"));
 		}
 		return (std::optional<Error>(strerror(errno)));
 	}
@@ -70,12 +75,11 @@ std::optional<Error>	DaemonManager::close_lockfile() {
 	return (std::nullopt);
 }
 
-
-int	DaemonManager::get_lockfile_fd() const noexcept {
+int DaemonManager::get_lockfile_fd() const noexcept {
 	return this->_lockfile_fd;
 }
 
-bool	DaemonManager::lockfile_exists() noexcept {
+bool DaemonManager::lockfile_exists() noexcept {
 	return (access(DaemonManager::lockfile_fullpath.c_str(), F_OK) == 0);
 }
 
@@ -83,13 +87,17 @@ bool	DaemonManager::lockfile_exists() noexcept {
  * Make the process a daemon as described in the
  * chapter 37.2 (creating a daemon) of the "The Linux Programming Interface"
  */
-std::optional<Error>	DaemonManager::daemonize(void) const noexcept {
-	int	dev_null_fd;
+std::optional<Error> DaemonManager::daemonize(void) const noexcept {
+	int dev_null_fd;
 
 	switch (fork()) {
-		case (0): break;
-		case (-1): return std::optional<Error>(std::string("error on first fork:") + strerror(errno));
-		default: exit(0);
+	case (0):
+		break;
+	case (-1):
+		return std::optional<Error>(std::string("error on first fork:") +
+									strerror(errno));
+	default:
+		exit(0);
 	}
 	if (setsid() == -1) {
 		return std::optional<Error>(strerror(errno));
@@ -99,9 +107,13 @@ std::optional<Error>	DaemonManager::daemonize(void) const noexcept {
 	 * is not set as the controlling terminal
 	 */
 	switch (fork()) {
-		case (0): break;
-		case (-1): return (std::optional<Error>(std::string("error on second fork:") + strerror(errno)));
-		default: exit(0);
+	case (0):
+		break;
+	case (-1):
+		return (std::optional<Error>(std::string("error on second fork:") +
+									 strerror(errno)));
+	default:
+		exit(0);
 	}
 	/*
 	 * change the process' mask and it's cwd to "/"
