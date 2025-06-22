@@ -1,6 +1,6 @@
 #include "../../lib/logging/Logger.hpp"
 
-Logger *Logger::_instance = nullptr;
+std::unique_ptr<Logger> Logger::_instance = nullptr;
 
 Logger::Logger(LogLevel level, std::unique_ptr<LogHandler> handler)
     : handler(std::move(handler)), level(level) {}
@@ -9,22 +9,23 @@ Logger::~Logger() {
 	if (Logger::_instance == nullptr) {
 		return;
 	}
-	delete Logger::_instance;
 	return;
 }
 
 void Logger::init_with_level(
     LogLevel level, std::unique_ptr<LogHandler> handler
 ) noexcept {
-	Logger::_instance = new Logger(level, std::move(handler));
+	auto ptr = new Logger(level, std::move(handler));
+	Logger::_instance = std::unique_ptr<Logger>(ptr);
 	return;
 }
 
 // TODO: Tem que puxar o level de uma env
 void Logger::init_with_env_level(std::unique_ptr<LogHandler> handler) noexcept {
 	LogLevel level = LogLevel::INFO;
+	auto     ptr = new Logger(level, std::move(handler));
 
-	Logger::_instance = new Logger(level, std::move(handler));
+	Logger::_instance = std::unique_ptr<Logger>(ptr);
 	return;
 }
 

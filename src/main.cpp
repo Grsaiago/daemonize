@@ -6,10 +6,9 @@
 #include <new>
 
 int main(void) {
-	std::unique_ptr<LogHandler> ptr = std::make_unique<TinTinReporter>();
 
 	Info("Essa mensagem aqui não deveria aparecer e nem crashar");
-	Logger::init_with_level(LogLevel::INFO, std::move(ptr));
+	Logger::init_with_level(LogLevel::INFO, std::make_unique<TinTinReporter>());
 	Info("Essa deveria aparecer");
 	return (EXIT_SUCCESS);
 	std::string          input;

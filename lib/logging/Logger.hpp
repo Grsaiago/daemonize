@@ -26,7 +26,7 @@ class Logger {
 	std::unique_ptr<LogHandler> handler;
 	LogLevel                    level;
 
-	static Logger *_instance;
+	static std::unique_ptr<Logger> _instance;
 
 	static void debug(
 	    std::string message, std::string file, unsigned int line,
