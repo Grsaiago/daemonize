@@ -2,9 +2,9 @@
 
 const std::string DaemonManager::lockfile_path = std::string("/var/lock/");
 const std::string DaemonManager::lockfile_name =
-	std::string("matt_daemon.lock");
+    std::string("matt_daemon.lock");
 const std::string DaemonManager::lockfile_fullpath =
-	DaemonManager::lockfile_path + DaemonManager::lockfile_name;
+    DaemonManager::lockfile_path + DaemonManager::lockfile_name;
 
 DaemonManager::DaemonManager() noexcept(false) {
 	if (access(DaemonManager::lockfile_fullpath.c_str(), F_OK) == 0) {
@@ -25,15 +25,15 @@ DaemonManager::~DaemonManager() noexcept(false) {
 
 std::optional<Error> DaemonManager::open_lockfile() {
 	// create file
-	this->_lockfile_fd =
-		open(DaemonManager::lockfile_fullpath.c_str(),
-			 O_CREAT				 // create the file
-				 | O_EXCL			 // error if the file already exists
-				 | O_NONBLOCK		 // not block on trying to acquire lock
-				 | O_WRONLY,		 // open the file in write only
-			 S_IWUSR | S_IRUSR		 // User permission to read and write */
-				 | S_IRGRP | S_IROTH // Others and Group have read permission */
-		);
+	this->_lockfile_fd = open(
+	    DaemonManager::lockfile_fullpath.c_str(),
+	    O_CREAT                 // create the file
+	        | O_EXCL            // error if the file already exists
+	        | O_NONBLOCK        // not block on trying to acquire lock
+	        | O_WRONLY,         // open the file in write only
+	    S_IWUSR | S_IRUSR       // User permission to read and write */
+	        | S_IRGRP | S_IROTH // Others and Group have read permission */
+	);
 	if (this->_lockfile_fd < 0) {
 		if (errno == EEXIST) {
 			return (std::optional<Error>("file already exists"));
@@ -45,7 +45,8 @@ std::optional<Error> DaemonManager::open_lockfile() {
 	if (flock(this->_lockfile_fd, LOCK_EX | LOCK_NB) < 0) {
 		if (errno == EWOULDBLOCK) {
 			return (std::optional<Error>(
-				"the lock is already in place by another instance of Server"));
+			    "the lock is already in place by another instance of Server"
+			));
 		}
 		return (std::optional<Error>(strerror(errno)));
 	}
@@ -58,13 +59,14 @@ std::optional<Error> DaemonManager::open_lockfile() {
 std::optional<Error> DaemonManager::close_lockfile() {
 	if (this->_lockfile_fd < 0) {
 		return (std::optional<Error>(
-			"this Server instance doesn't have a handle to the file"));
+		    "this Server instance doesn't have a handle to the file"
+		));
 	}
 	// try to unlock file
 	if (flock(this->_lockfile_fd, LOCK_UN | LOCK_NB) < 0) {
 		if (errno == EWOULDBLOCK) {
 			return (std::optional<Error>("cannot unlock file: lock is in place "
-										 "by another instance of Server"));
+			                             "by another instance of Server"));
 		}
 		return (std::optional<Error>(strerror(errno)));
 	}
@@ -94,8 +96,9 @@ std::optional<Error> DaemonManager::daemonize(void) const noexcept {
 	case (0):
 		break;
 	case (-1):
-		return std::optional<Error>(std::string("error on first fork:") +
-									strerror(errno));
+		return std::optional<Error>(
+		    std::string("error on first fork:") + strerror(errno)
+		);
 	default:
 		exit(0);
 	}
@@ -110,8 +113,9 @@ std::optional<Error> DaemonManager::daemonize(void) const noexcept {
 	case (0):
 		break;
 	case (-1):
-		return (std::optional<Error>(std::string("error on second fork:") +
-									 strerror(errno)));
+		return (std::optional<Error>(
+		    std::string("error on second fork:") + strerror(errno)
+		));
 	default:
 		exit(0);
 	}
