@@ -5,6 +5,11 @@
 #include <memory>
 #include <string>
 
+#define Debug(msg) (Logger::debug(msg, __FILE__, __LINE__, __func__))
+#define Info(msg) (Logger::info(msg, __FILE__, __LINE__, __func__))
+#define Warn(msg) (Logger::warn(msg, __FILE__, __LINE__, __func__))
+#define Error(msg) (Logger::error(msg, __FILE__, __LINE__, __func__))
+
 enum class LogLevel { DEBUG = 0, INFO = 1, WARN = 2, ERROR = 3 };
 
 class Logger {
@@ -22,13 +27,26 @@ class Logger {
 	LogLevel                    level;
 
 	static Logger *_instance;
-	static void    debug(std::string message) noexcept;
-	static void    info(std::string message) noexcept;
-	static void    warn(std::string message) noexcept;
-	static void    error(std::string message) noexcept;
+
+	static void debug(
+	    std::string message, std::string file, unsigned int line,
+	    std::string caller
+	) noexcept;
+	static void info(
+	    std::string message, std::string file, unsigned int line,
+	    std::string caller
+	) noexcept;
+	static void warn(
+	    std::string message, std::string file, unsigned int line,
+	    std::string caller
+	) noexcept;
+	static void error(
+	    std::string message, std::string file, unsigned int line,
+	    std::string caller
+	) noexcept;
 
   private:
-	Logger(LogLevel level, LogHandler &handler);
+	Logger(LogLevel level, std::unique_ptr<LogHandler> handler);
 };
 
 #endif // !_LOGGER_H_
