@@ -40,8 +40,8 @@ void Logger::debug(
 	}
 
 	va_start(vlist, message);
-	std::string formatted_message = get_formatted_message(message, vlist);
-	if (Logger::_instance->level >= LogLevel::DEBUG) {
+	if (Logger::_instance->level <= LogLevel::DEBUG) {
+		std::string formatted_message = get_formatted_message(message, vlist);
 		Logger::_instance->handler->debug_handler(
 		    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
 		    ": " + formatted_message
@@ -61,8 +61,8 @@ void Logger::info(
 	}
 
 	va_start(vlist, message);
-	std::string formatted_message = get_formatted_message(message, vlist);
-	if (Logger::_instance->level >= LogLevel::INFO) {
+	if (Logger::_instance->level <= LogLevel::INFO) {
+		std::string formatted_message = get_formatted_message(message, vlist);
 		Logger::_instance->handler->info_handler(
 		    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
 		    ": " + formatted_message
@@ -82,8 +82,8 @@ void Logger::warn(
 	}
 
 	va_start(vlist, message);
-	std::string formatted_message = get_formatted_message(message, vlist);
-	if (Logger::_instance->level >= LogLevel::WARN) {
+	if (Logger::_instance->level <= LogLevel::WARN) {
+		std::string formatted_message = get_formatted_message(message, vlist);
 		Logger::_instance->handler->warn_handler(
 		    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
 		    ": " + formatted_message
@@ -103,8 +103,8 @@ void Logger::error(
 	}
 
 	va_start(vlist, message);
-	std::string formatted_message = get_formatted_message(message, vlist);
-	if (Logger::_instance->level >= LogLevel::ERROR) {
+	if (Logger::_instance->level <= LogLevel::ERROR) {
+		std::string formatted_message = get_formatted_message(message, vlist);
 		Logger::_instance->handler->error_handler(
 		    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
 		    ": " + formatted_message

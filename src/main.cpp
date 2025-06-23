@@ -11,6 +11,7 @@ int main(void) {
 	Info("Essa mensagem aqui não deveria aparecer e nem crashar");
 	Logger::init_with_level(LogLevel::INFO, std::make_unique<TinTinReporter>());
 	Info("Essa deveria aparecer %d", i);
+	Debug("Essa não deveria ser capturada");
 	return (EXIT_SUCCESS);
 	std::string          input;
 	DaemonManager *const daemon_manager = new (std::nothrow) DaemonManager();
