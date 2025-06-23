@@ -16,7 +16,7 @@
 #define Warn(msg, ...)                                                         \
 	(Logger::warn(__FILE__, __LINE__, __func__, msg, ##__VA_ARGS__))
 
-#define Error(msg, ...)                                                        \
+#define Err(msg, ...)                                                          \
 	(Logger::error(__FILE__, __LINE__, __func__, msg, ##__VA_ARGS__))
 
 enum class LogLevel { DEBUG = 0, INFO = 1, WARN = 2, ERROR = 3 };

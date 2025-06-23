@@ -2,22 +2,20 @@
 #include "../lib/Server.hpp"
 #include "../lib/logging/Logger.hpp"
 #include "../lib/logging/TinTinReporter.hpp"
+#include <exception>
 #include <memory>
 #include <new>
 
 int main(void) {
-
-	int i = 10;
-	Info("Essa mensagem aqui não deveria aparecer e nem crashar");
 	Logger::init_with_level(LogLevel::INFO, std::make_unique<TinTinReporter>());
-	Info("Essa deveria aparecer %d", i);
-	Debug("Essa não deveria ser capturada");
-	return (EXIT_SUCCESS);
-	std::string          input;
-	DaemonManager *const daemon_manager = new (std::nothrow) DaemonManager();
+	std::string    input;
+	DaemonManager *daemon_manager;
 
-	if (daemon_manager == nullptr) {
-		std::cerr << "Failed to create the daemon manager" << std::endl;
+	try {
+		daemon_manager = new (std::nothrow) DaemonManager();
+	} catch (std::exception &err) {
+		Err(err.what());
+		return (EXIT_FAILURE);
 	}
 
 	std::getline(std::cin, input);
