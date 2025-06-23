@@ -2,6 +2,7 @@
 #define _DAEMON_MANAGER_H_
 
 #include "../lib/Error.hpp"
+#include "../lib/logging/Logger.hpp"
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
@@ -23,11 +24,11 @@ class DaemonManager {
 
 	[[nodiscard]] int get_lockfile_fd() const noexcept;
 
-	[[nodiscard]] static bool lockfile_exists() noexcept;
+	[[nodiscard]] static bool          lockfile_exists() noexcept;
 	[[nodiscard]] std::optional<Error> daemonize(void) const noexcept;
-	static const std::string lockfile_path;
-	static const std::string lockfile_name;
-	static const std::string lockfile_fullpath;
+	static const std::string           lockfile_path;
+	static const std::string           lockfile_name;
+	static const std::string           lockfile_fullpath;
 
   private:
 	int _lockfile_fd;

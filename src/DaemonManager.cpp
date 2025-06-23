@@ -8,10 +8,12 @@ const std::string DaemonManager::lockfile_fullpath =
 
 DaemonManager::DaemonManager() noexcept(false) {
 	if (access(DaemonManager::lockfile_fullpath.c_str(), F_OK) == 0) {
+		Err("lockfile already exists");
 		throw std::logic_error("lockfile already exists");
 	}
 	auto result = this->open_lockfile();
 	if (result.has_value()) {
+		Err(result.value().reason);
 		throw std::logic_error(result.value().reason);
 	}
 }
