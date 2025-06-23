@@ -7,9 +7,10 @@
 
 int main(void) {
 
+	int i = 10;
 	Info("Essa mensagem aqui não deveria aparecer e nem crashar");
 	Logger::init_with_level(LogLevel::INFO, std::make_unique<TinTinReporter>());
-	Info("Essa deveria aparecer");
+	Info("Essa deveria aparecer %d", i);
 	return (EXIT_SUCCESS);
 	std::string          input;
 	DaemonManager *const daemon_manager = new (std::nothrow) DaemonManager();

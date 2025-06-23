@@ -30,64 +30,84 @@ void Logger::init_with_env_level(std::unique_ptr<LogHandler> handler) noexcept {
 }
 
 void Logger::debug(
-    std::string message, std::string file, unsigned int line, std::string caller
+    std::string file, unsigned int line, std::string caller,
+    std::string message, ...
 ) noexcept {
-	(void)line;
+	va_list vlist;
+
 	if (Logger::_instance == nullptr) {
 		return;
 	}
+
+	va_start(vlist, message);
+	std::string formatted_message = get_formatted_message(message, vlist);
 	if (Logger::_instance->level >= LogLevel::DEBUG) {
 		Logger::_instance->handler->debug_handler(
-		    "[DEBUG] " + file + "::" + caller + "::" + std::to_string(line) +
-		    ": " + message
+		    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
+		    ": " + formatted_message
 		);
 	}
 	return;
 }
 
 void Logger::info(
-    std::string message, std::string file, unsigned int line, std::string caller
+    std::string file, unsigned int line, std::string caller,
+    std::string message, ...
 ) noexcept {
-	(void)line;
+	va_list vlist;
+
 	if (Logger::_instance == nullptr) {
 		return;
 	}
+
+	va_start(vlist, message);
+	std::string formatted_message = get_formatted_message(message, vlist);
 	if (Logger::_instance->level >= LogLevel::INFO) {
 		Logger::_instance->handler->info_handler(
 		    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
-		    ": " + message
+		    ": " + formatted_message
 		);
 	}
 	return;
 }
 
 void Logger::warn(
-    std::string message, std::string file, unsigned int line, std::string caller
+    std::string file, unsigned int line, std::string caller,
+    std::string message, ...
 ) noexcept {
-	(void)line;
+	va_list vlist;
+
 	if (Logger::_instance == nullptr) {
 		return;
 	}
+
+	va_start(vlist, message);
+	std::string formatted_message = get_formatted_message(message, vlist);
 	if (Logger::_instance->level >= LogLevel::WARN) {
 		Logger::_instance->handler->warn_handler(
-		    "[WARN] " + file + "::" + caller + "::" + std::to_string(line) +
-		    ": " + message
+		    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
+		    ": " + formatted_message
 		);
 	}
 	return;
 }
 
 void Logger::error(
-    std::string message, std::string file, unsigned int line, std::string caller
+    std::string file, unsigned int line, std::string caller,
+    std::string message, ...
 ) noexcept {
-	(void)line;
+	va_list vlist;
+
 	if (Logger::_instance == nullptr) {
 		return;
 	}
+
+	va_start(vlist, message);
+	std::string formatted_message = get_formatted_message(message, vlist);
 	if (Logger::_instance->level >= LogLevel::ERROR) {
 		Logger::_instance->handler->error_handler(
-		    "[ERROR] " + file + "::" + caller + "::" + std::to_string(line) +
-		    ": " + message
+		    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
+		    ": " + formatted_message
 		);
 	}
 	return;

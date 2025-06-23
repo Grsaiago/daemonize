@@ -2,13 +2,22 @@
 #define _LOGGER_H_
 
 #include "LogHandler.hpp"
+#include "logging_utils.hpp"
+#include <cstdarg>
 #include <memory>
 #include <string>
 
-#define Debug(msg) (Logger::debug(msg, __FILE__, __LINE__, __func__))
-#define Info(msg) (Logger::info(msg, __FILE__, __LINE__, __func__))
-#define Warn(msg) (Logger::warn(msg, __FILE__, __LINE__, __func__))
-#define Error(msg) (Logger::error(msg, __FILE__, __LINE__, __func__))
+#define Debug(msg, ...)                                                        \
+	(Logger::debug(__FILE__, __LINE__, __func__, msg, ##__VA_ARGS__))
+
+#define Info(msg, ...)                                                         \
+	(Logger::info(__FILE__, __LINE__, __func__, msg, ##__VA_ARGS__))
+
+#define Warn(msg, ...)                                                         \
+	(Logger::warn(__FILE__, __LINE__, __func__, msg, ##__VA_ARGS__))
+
+#define Error(msg, ...)                                                        \
+	(Logger::error(__FILE__, __LINE__, __func__, msg, ##__VA_ARGS__))
 
 enum class LogLevel { DEBUG = 0, INFO = 1, WARN = 2, ERROR = 3 };
 
@@ -29,20 +38,20 @@ class Logger {
 	static std::unique_ptr<Logger> _instance;
 
 	static void debug(
-	    std::string message, std::string file, unsigned int line,
-	    std::string caller
+	    std::string file, unsigned int line, std::string caller,
+	    std::string message, ...
 	) noexcept;
 	static void info(
-	    std::string message, std::string file, unsigned int line,
-	    std::string caller
+	    std::string file, unsigned int line, std::string caller,
+	    std::string message, ...
 	) noexcept;
 	static void warn(
-	    std::string message, std::string file, unsigned int line,
-	    std::string caller
+	    std::string file, unsigned int line, std::string caller,
+	    std::string message, ...
 	) noexcept;
 	static void error(
-	    std::string message, std::string file, unsigned int line,
-	    std::string caller
+	    std::string file, unsigned int line, std::string caller,
+	    std::string message, ...
 	) noexcept;
 
   private:
