@@ -5,12 +5,7 @@ std::unique_ptr<Logger> Logger::_instance = nullptr;
 Logger::Logger(LogLevel level, std::unique_ptr<LogHandler> handler)
     : handler(std::move(handler)), level(level) {}
 
-Logger::~Logger() {
-	if (Logger::_instance == nullptr) {
-		return;
-	}
-	return;
-}
+Logger::~Logger() {}
 
 void Logger::init_with_level(
     LogLevel level, std::unique_ptr<LogHandler> handler
@@ -35,18 +30,17 @@ void Logger::debug(
 ) noexcept {
 	va_list vlist;
 
-	if (Logger::_instance == nullptr) {
+	if (Logger::_instance == nullptr || Logger::_instance->level <= LogLevel::DEBUG) {
 		return;
 	}
 
 	va_start(vlist, message);
-	if (Logger::_instance->level <= LogLevel::DEBUG) {
-		std::string formatted_message = get_formatted_message(message, vlist);
-		Logger::_instance->handler->debug_handler(
-		    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
-		    ": " + formatted_message
-		);
-	}
+	std::string formatted_message = get_formatted_message(message, vlist);
+	Logger::_instance->handler->debug_handler(
+	    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
+	    ": " + formatted_message
+	);
+	va_end(vlist);
 	return;
 }
 
@@ -56,18 +50,17 @@ void Logger::info(
 ) noexcept {
 	va_list vlist;
 
-	if (Logger::_instance == nullptr) {
+	if (Logger::_instance == nullptr || Logger::_instance->level <= LogLevel::INFO) {
 		return;
 	}
 
 	va_start(vlist, message);
-	if (Logger::_instance->level <= LogLevel::INFO) {
-		std::string formatted_message = get_formatted_message(message, vlist);
-		Logger::_instance->handler->info_handler(
-		    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
-		    ": " + formatted_message
-		);
-	}
+	std::string formatted_message = get_formatted_message(message, vlist);
+	Logger::_instance->handler->info_handler(
+	    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
+	    ": " + formatted_message
+	);
+	va_end(vlist);
 	return;
 }
 
@@ -77,18 +70,17 @@ void Logger::warn(
 ) noexcept {
 	va_list vlist;
 
-	if (Logger::_instance == nullptr) {
+	if (Logger::_instance == nullptr || Logger::_instance->level <= LogLevel::WARN) {
 		return;
 	}
 
 	va_start(vlist, message);
-	if (Logger::_instance->level <= LogLevel::WARN) {
-		std::string formatted_message = get_formatted_message(message, vlist);
-		Logger::_instance->handler->warn_handler(
-		    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
-		    ": " + formatted_message
-		);
-	}
+	std::string formatted_message = get_formatted_message(message, vlist);
+	Logger::_instance->handler->warn_handler(
+	    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
+	    ": " + formatted_message
+	);
+	va_end(vlist);
 	return;
 }
 
@@ -98,17 +90,16 @@ void Logger::error(
 ) noexcept {
 	va_list vlist;
 
-	if (Logger::_instance == nullptr) {
+	if (Logger::_instance == nullptr || Logger::_instance->level <= LogLevel::ERROR)  {
 		return;
 	}
 
 	va_start(vlist, message);
-	if (Logger::_instance->level <= LogLevel::ERROR) {
-		std::string formatted_message = get_formatted_message(message, vlist);
-		Logger::_instance->handler->error_handler(
-		    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
-		    ": " + formatted_message
-		);
-	}
+	std::string formatted_message = get_formatted_message(message, vlist);
+	Logger::_instance->handler->error_handler(
+	    "[INFO] " + file + "::" + caller + "::" + std::to_string(line) +
+	    ": " + formatted_message
+	);
+	va_end(vlist);
 	return;
 }
