@@ -6,6 +6,7 @@
 class SyslogReporter : public LogHandler {
   public:
 	SyslogReporter();
+	SyslogReporter(LogLevel level);
 	~SyslogReporter();
 
 	void debug_handler(LogEvent event) noexcept override;
