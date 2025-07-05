@@ -2,6 +2,7 @@
 #define _LOGGER_H_
 
 #include "LogHandler.hpp"
+#include "LogTypes.hpp"
 #include "logging_utils.hpp"
 #include <cstdarg>
 #include <memory>
@@ -18,8 +19,6 @@
 
 #define Err(msg, ...)                                                          \
 	(Logger::error(__FILE__, __LINE__, __func__, msg, ##__VA_ARGS__))
-
-enum class LogLevel { DEBUG = 0, INFO = 1, WARN = 2, ERROR = 3 };
 
 class Logger {
   public:

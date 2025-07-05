@@ -18,6 +18,7 @@ int main(void) {
 		return (EXIT_FAILURE);
 	}
 
+	Info("Essa string aqui");
 	std::getline(std::cin, input);
 
 	delete (daemon_manager);

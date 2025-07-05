@@ -1,4 +1,5 @@
 #include "../../lib/logging/logging_utils.hpp"
+#include <vector>
 
 std::string get_formatted_message(std::string fmessage, va_list args) {
 	va_list args_cpy;

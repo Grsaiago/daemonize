@@ -1,12 +1,12 @@
-#ifndef _TIN_TIN_REPORTER_H_
-#define _TIN_TIN_REPORTER_H_
+#ifndef _SYSTEMD_REPORTER_H_
+#define _SYSTEMD_REPORTER_H_
 
 #include "LogHandler.hpp"
 
-class TinTinReporter : public LogHandler {
+class SyslogReporter : public LogHandler {
   public:
-	TinTinReporter();
-	~TinTinReporter();
+	SyslogReporter();
+	~SyslogReporter();
 
 	void debug_handler(LogEvent event) noexcept override;
 	void info_handler(LogEvent event) noexcept override;
@@ -14,4 +14,4 @@ class TinTinReporter : public LogHandler {
 	void error_handler(LogEvent event) noexcept override;
 };
 
-#endif // !_TIN_TIN_REPORTER_H_
+#endif // !_SYSTEMD_REPORTER_H_

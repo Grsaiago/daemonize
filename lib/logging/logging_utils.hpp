@@ -3,7 +3,6 @@
 
 #include <cstdarg>
 #include <string>
-#include <vector>
 
 std::string get_formatted_message(std::string fmessage, va_list args);
 
