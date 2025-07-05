@@ -13,10 +13,13 @@ SyslogReporter::SyslogReporter(LogLevel level) {
 	switch (level) {
 	case LogLevel::DEBUG:
 		syslog_level |= LOG_DEBUG;
+		[[fallthrough]];
 	case LogLevel::INFO:
 		syslog_level |= LOG_INFO;
+		[[fallthrough]];
 	case LogLevel::WARN:
 		syslog_level |= LOG_WARNING;
+		[[fallthrough]];
 	case LogLevel::ERROR:
 		syslog_level |= LOG_ERR;
 	}
