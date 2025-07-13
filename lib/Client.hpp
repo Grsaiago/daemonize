@@ -3,6 +3,7 @@
 
 #include "IPollable.hpp"
 #include <optional>
+#include <sys/epoll.h>
 
 class Client : public IPollable {
   public:
@@ -13,7 +14,7 @@ class Client : public IPollable {
 
 	Client &operator=(const Client &rhs);
 
-	int get_fd(void) const noexcept override;
+	int                  get_fd(void) const noexcept override;
 	std::optional<Error> handle_poll(void) noexcept override;
 
   private:

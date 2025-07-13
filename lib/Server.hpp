@@ -21,18 +21,19 @@ class Server {
 	~Server() noexcept(false);
 
 	[[nodiscard]] std::optional<Error> listen_and_serve() noexcept;
-	[[nodiscard]] std::optional<Error>
-	add_new_client(Client &new_client) noexcept;
+	[[nodiscard]] std::optional<Error> add_new_client(
+	    Client &new_client
+	) noexcept;
 
   private:
 	Server(const Server &cpy) noexcept(false);
 	Server() noexcept(false);
 	Server &operator=(const Server &rhs);
 
-	int _epoll_fd;
+	int                                  _epoll_fd;
 	std::array<std::optional<Client>, 3> _clients;
-	Listener _listener;
-	static Server *_instance;
+	Listener                             _listener;
+	static Server                       *_instance;
 };
 
 #endif // !_SERVER_H_

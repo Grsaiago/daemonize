@@ -6,21 +6,21 @@
 #include <memory>
 #include <new>
 
-int main(void) {
+int main() {
 	Logger::init_with_level(LogLevel::INFO, std::make_unique<TinTinReporter>());
 	std::string    input;
-	DaemonManager *daemon_manager;
+	DaemonManager *daemon_manager = nullptr;
 
 	try {
-		daemon_manager = new (std::nothrow) DaemonManager();
-	} catch (std::exception &err) {
+		daemon_manager = new DaemonManager();
+	} catch (const std::exception &err) {
 		Err(err.what());
-		return (EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	Info("Essa string aqui");
 	std::getline(std::cin, input);
 
-	delete (daemon_manager);
-	return (EXIT_SUCCESS);
+	delete daemon_manager;
+	return EXIT_SUCCESS;
 }
