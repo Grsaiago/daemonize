@@ -17,22 +17,30 @@
 
 class Server {
   public:
-	[[nodiscard]] static Server *get_instance() noexcept;
+	[[nodiscard]] static Server *get_instance(void) noexcept;
 	~Server() noexcept(false);
 
-	[[nodiscard]] std::optional<Error> listen_and_serve() noexcept;
+	[[nodiscard]] std::optional<Error> listen_and_serve(
+	    std::string &start_message
+	) noexcept;
 	[[nodiscard]] std::optional<Error> add_new_client(
 	    Client &new_client
 	) noexcept;
+	static Server *install_new_default_server(
+	    std::string &host, std::string &port
+	) noexcept;
 
   private:
-	Server(const Server &cpy) noexcept(false);
+	Server(const Server &cpy) noexcept(false) = delete;
 	Server() noexcept(false);
-	Server &operator=(const Server &rhs);
+	Server &operator=(const Server &rhs) = delete;
+	Server(Listener &_listener) noexcept(false) = delete;
+
+	[[nodiscard]] std::optional<Error> event_loop(void) noexcept;
 
 	int                                  _epoll_fd;
 	std::array<std::optional<Client>, 3> _clients;
-	Listener                             _listener;
+	Listener                            *_listener;
 	static Server                       *_instance;
 };
 

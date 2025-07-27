@@ -5,12 +5,15 @@
 #include <cstring>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <optional>
 #include <stdexcept>
 #include <sys/socket.h>
 #include <unistd.h>
 
-Listener::Listener(std::shared_ptr<Server> server_instance)
-    : _fd(-1), _server_instance(server_instance) {
+Listener::Listener(
+    Server *server_instance, std::string &host, std::string &port
+)
+    : _fd(-1), _server_instance(server_instance), _host(host), _port(port) {
 	struct sockaddr_storage addr;
 	socklen_t               addr_len;
 
@@ -21,7 +24,7 @@ Listener::Listener(std::shared_ptr<Server> server_instance)
 		    std::strerror(errno)
 		);
 	}
-	if (!this->resolve_addr(&addr, "0.0.0.0")) {
+	if (!this->resolve_addr(&addr, this->_host.c_str())) {
 		throw std::runtime_error(
 		    std::string("error opening the listener socket: ") +
 		    std::strerror(errno)
@@ -40,12 +43,6 @@ Listener::Listener(std::shared_ptr<Server> server_instance)
 	    0) {
 		throw std::runtime_error(
 		    std::string("error on binding listener socket: ") +
-		    std::strerror(errno)
-		);
-	}
-	if (listen(this->_fd, 100) != 0) {
-		throw std::runtime_error(
-		    std::string("error on listen call of listener socket: ") +
 		    std::strerror(errno)
 		);
 	}
@@ -76,7 +73,8 @@ bool Listener::resolve_addr(
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 
-	int getaddr_return = getaddrinfo(host.c_str(), "4242", &hints, &head);
+	int getaddr_return =
+	    getaddrinfo(host.c_str(), this->_port.c_str(), &hints, &head);
 	if (getaddr_return != 0) {
 		Err("getaddrinfo failed: %s", gai_strerror(getaddr_return));
 		return (false);
@@ -103,4 +101,14 @@ bool Listener::resolve_addr(
 	Err("unable to find an available socket address");
 	freeaddrinfo(head);
 	return (false);
+}
+
+std::optional<Error> Listener::listen() noexcept {
+	if (::listen(this->_fd, 100) != 0) {
+		return std::optional<Error>(
+		    std::string("error on listen call of listener socket: ") +
+		    std::strerror(errno)
+		);
+	}
+	return (std::nullopt);
 }
