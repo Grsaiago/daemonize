@@ -14,8 +14,13 @@ class Client : public IPollable {
 
 	Client &operator=(const Client &rhs);
 
-	int                  get_fd(void) const noexcept override;
-	std::optional<Error> handle_poll(void) noexcept override;
+	int                                get_fd(void) const noexcept override;
+	[[nodiscard]] std::optional<Error> handle_poll(
+	    struct epoll_event ev
+	) noexcept override;
+	[[nodiscard]] struct epoll_event get_events_of_interest(
+	    void
+	) const noexcept override;
 
   private:
 	int _fd;

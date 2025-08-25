@@ -3,7 +3,6 @@
 #include "../lib/logging/Logger.hpp"
 #include "../lib/logging/TinTinReporter.hpp"
 #include <exception>
-#include <iostream>
 #include <memory>
 #include <new>
 
@@ -13,7 +12,6 @@ int main() {
 	std::string                    port = "4242";
 	Server                        *server = nullptr;
 	std::unique_ptr<DaemonManager> daemon_manager = nullptr;
-	std::string                    input;
 
 	try {
 		daemon_manager = std::make_unique<DaemonManager>();
@@ -24,7 +22,6 @@ int main() {
 	}
 
 	Info("Essa string aqui");
-	std::getline(std::cin, input);
 
 	std::string message = "Starting server on " + host + ":" + port;
 	if (auto result = server->listen_and_serve(message); result.has_value()) {

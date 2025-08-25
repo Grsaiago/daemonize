@@ -8,25 +8,23 @@
 Server *Server::_instance = nullptr;
 
 Server *Server::install_new_default_server(
-    std::string &host, std::string &port
+    const std::string &host, const std::string &port
 ) noexcept {
 	if (Server::_instance == nullptr) {
-		Server::_instance = new (std::nothrow) Server();
+		Server::_instance = new (std::nothrow) Server(host, port);
 	}
-	Server::_instance->_listener = new Listener(Server::_instance, host, port);
 	return (Server::_instance);
 }
 
 Server *Server::get_instance(void) noexcept {
 	if (Server::_instance == nullptr) {
-		Server::_instance = new (std::nothrow) Server();
+		Server::_instance = new (std::nothrow) Server("127.0.0.1", "4242");
 	}
 	return (Server::_instance);
 }
 
-Server::Server() noexcept(false) : _epoll_fd(-1), _clients(), _listener() {
-	std::string host = "0.0.0.0";
-	std::string port = "4242";
+Server::Server(const std::string &host, const std::string &port) noexcept(false)
+    : _should_run(true), _epoll_fd(-1), _clients(), _listener() {
 	this->_listener = new Listener(this, host, port);
 	return;
 }
@@ -35,6 +33,7 @@ Server::~Server() noexcept(false) {
 	if (this->_epoll_fd != -1) {
 		close(this->_epoll_fd);
 	}
+	delete this->_listener;
 	return;
 }
 
@@ -46,20 +45,58 @@ std::optional<Error> Server::add_new_client(Client &new_client) noexcept {
 std::optional<Error> Server::listen_and_serve(
     std::string &start_message
 ) noexcept {
-	this->_epoll_fd = epoll_create(5);
+	struct epoll_event listener_events_of_interest =
+	    this->_listener->get_events_of_interest();
+	this->_epoll_fd = epoll_create(4);
 	if (this->_epoll_fd == -1) {
 		return (std::optional<Error>(strerror(errno)));
 	}
 	if (std::optional<Error> listen_return = this->_listener->listen();
 	    listen_return.has_value()) {
+		Err("error on listener listen call: %s", listen_return->reason.c_str());
 		return (std::optional<Error>(listen_return->reason));
 	}
-	return (std::nullopt);
-
+	if (epoll_ctl(
+	        this->_epoll_fd, EPOLL_CTL_ADD, this->_listener->get_fd(),
+	        &listener_events_of_interest
+	    ) == -1) {
+		Err("error on adding listener to epoll instance: %s", strerror(errno));
+		return (std::optional<Error>(strerror(errno)));
+	}
 	Info(start_message.c_str());
 	return (this->event_loop());
 }
 
 std::optional<Error> Server::event_loop(void) noexcept {
+	int                  ev_count = 0;
+	struct epoll_event  *ev = nullptr;
+	std::optional<Error> err;
+
+	while (this->_should_run) {
+		Info("checking/waiting for new events");
+		ev_count = epoll_wait(
+		    this->_epoll_fd, this->_pollables.data(), this->_pollables.size(),
+		    -1
+		);
+		if (ev_count == -1) {
+			if (errno == EINTR) {
+				continue;
+			}
+			Err("error on checking/waiting for new events", strerror(errno));
+			return (std::optional<Error>(strerror(errno)));
+		}
+		Info("new events received, starting handle loop");
+		for (int i = 0; i < ev_count; i++) {
+			ev = &this->_pollables[i];
+
+			Info("handling event on position [%d]", i);
+			err = reinterpret_cast<IPollable *>(ev->data.ptr)->handle_poll(*ev);
+			if (err.has_value()) {
+				Err("error calling handle_poll in epoll_event: %s",
+				    err->reason.c_str());
+				return (err);
+			}
+		}
+	}
 	return (std::nullopt);
 }

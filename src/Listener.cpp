@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 Listener::Listener(
-    Server *server_instance, std::string &host, std::string &port
+    Server *server_instance, const std::string &host, const std::string &port
 )
     : _fd(-1), _server_instance(server_instance), _host(host), _port(port) {
 	struct sockaddr_storage addr;
@@ -54,12 +54,6 @@ Listener::~Listener() {
 		close(this->_fd);
 		this->_fd = -1;
 	}
-}
-
-int Listener::get_fd() const { return (this->_fd); }
-
-std::optional<Error> Listener::handle_poll(void) noexcept {
-	return (std::nullopt);
 }
 
 bool Listener::resolve_addr(
@@ -111,4 +105,21 @@ std::optional<Error> Listener::listen() noexcept {
 		);
 	}
 	return (std::nullopt);
+}
+
+int Listener::get_fd() const noexcept { return (this->_fd); }
+
+std::optional<Error> Listener::handle_poll(struct epoll_event ev) noexcept {
+	if (ev.events & EPOLLIN) {
+		Info("Bateu um pollin aqui em");
+	}
+	return (std::nullopt);
+}
+
+struct epoll_event Listener::get_events_of_interest(void) const noexcept {
+	struct epoll_event ev{};
+
+	ev.events = EPOLLIN | EPOLLET;
+	ev.data.ptr = const_cast<void *>(reinterpret_cast<const void *>(this));
+	return (ev);
 }

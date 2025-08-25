@@ -27,19 +27,21 @@ class Server {
 	    Client &new_client
 	) noexcept;
 	static Server *install_new_default_server(
-	    std::string &host, std::string &port
+	    const std::string &host, const std::string &port
 	) noexcept;
 
   private:
+	Server(const std::string &host, const std::string &port) noexcept(false);
 	Server(const Server &cpy) noexcept(false) = delete;
-	Server() noexcept(false);
 	Server &operator=(const Server &rhs) = delete;
 	Server(Listener &_listener) noexcept(false) = delete;
 
 	[[nodiscard]] std::optional<Error> event_loop(void) noexcept;
 
+	bool                                 _should_run;
 	int                                  _epoll_fd;
 	std::array<std::optional<Client>, 3> _clients;
+	std::array<struct epoll_event, 4>    _pollables;
 	Listener                            *_listener;
 	static Server                       *_instance;
 };

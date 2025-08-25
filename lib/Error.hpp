@@ -5,7 +5,7 @@
 class Error {
   public:
 	Error(std::string reason) : reason(reason) {}
-	const std::string reason;
+	std::string reason;
 };
 
 #endif // _RESULT_H_
