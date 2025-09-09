@@ -20,15 +20,21 @@ class Server {
 	[[nodiscard]] static Server *get_instance(void) noexcept;
 	~Server() noexcept(false);
 
-	[[nodiscard]] std::optional<Error> listen_and_serve(
-	    std::string &start_message
-	) noexcept;
-	[[nodiscard]] std::optional<Error> add_new_client(
-	    Client &new_client
-	) noexcept;
+	[[nodiscard]] const std::array<std::optional<Client>, 3> &get_clients(
+	    void
+	) const noexcept;
+
 	static Server *install_new_default_server(
 	    const std::string &host, const std::string &port
 	) noexcept;
+	[[nodiscard]] std::optional<Error> listen_and_serve(
+	    std::string &start_message
+	) noexcept;
+	[[nodiscard]] int get_active_client_count(void) const noexcept;
+	[[nodiscard]] std::optional<Error> add_new_client(
+	    Client &new_client
+	) noexcept;
+	[[nodiscard]] std::optional<Error> remove_client(int pos) noexcept;
 
   private:
 	Server(const std::string &host, const std::string &port) noexcept(false);

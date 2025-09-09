@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 
 class Server;
+class Client;
 
 class Listener : public IPollable {
   public:
@@ -30,7 +31,9 @@ class Listener : public IPollable {
 	[[nodiscard]] bool resolve_addr(
 	    struct sockaddr_storage *result, std::string const &host
 	) noexcept;
-	[[nodiscard]] std::optional<Error> listen() noexcept;
+
+	[[nodiscard]] std::optional<Error> listen(void) noexcept;
+	[[nodiscard]] Client              *accept_new_client(void) noexcept;
 
   protected:
 	int         _fd;

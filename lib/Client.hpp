@@ -9,10 +9,10 @@ class Client : public IPollable {
   public:
 	Client() = delete;
 	Client(int fd);
-	Client(const Client &cpy);
+	Client(const Client &cpy) = default;
 	~Client();
 
-	Client &operator=(const Client &rhs);
+	Client &operator=(const Client &rhs) = default;
 
 	int                                get_fd(void) const noexcept override;
 	[[nodiscard]] std::optional<Error> handle_poll(
@@ -21,6 +21,8 @@ class Client : public IPollable {
 	[[nodiscard]] struct epoll_event get_events_of_interest(
 	    void
 	) const noexcept override;
+
+	[[nodiscard]] int get_position(void) const noexcept;
 
   private:
 	int _fd;

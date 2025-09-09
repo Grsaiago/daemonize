@@ -2,6 +2,7 @@
 #include "../lib/Server.hpp"
 #include "../lib/logging/Logger.hpp"
 #include <cerrno>
+#include <cstddef>
 #include <cstring>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -110,8 +111,17 @@ std::optional<Error> Listener::listen() noexcept {
 int Listener::get_fd() const noexcept { return (this->_fd); }
 
 std::optional<Error> Listener::handle_poll(struct epoll_event ev) noexcept {
+	Server *server = Server::get_instance();
 	if (ev.events & EPOLLIN) {
-		Info("Bateu um pollin aqui em");
+		Client *new_client = this->accept_new_client();
+		if (!new_client) {
+			return std::optional<Error>("failed to accept new client");
+		}
+		auto err = server->add_new_client(*new_client);
+		if (err.has_value()) {
+			Err("failed to add new Client: %s", err->reason.c_str());
+			delete new_client;
+		}
 	}
 	return (std::nullopt);
 }
@@ -122,4 +132,14 @@ struct epoll_event Listener::get_events_of_interest(void) const noexcept {
 	ev.events = EPOLLIN | EPOLLET;
 	ev.data.ptr = const_cast<void *>(reinterpret_cast<const void *>(this));
 	return (ev);
+}
+
+Client *Listener::accept_new_client(void) noexcept {
+	int new_client_fd;
+	new_client_fd = accept(this->get_fd(), NULL, NULL);
+	if (new_client_fd < 0) {
+		Err("failed to accept new client %s", strerror(errno));
+		return (nullptr);
+	}
+	return new (std::nothrow) Client(new_client_fd);
 }

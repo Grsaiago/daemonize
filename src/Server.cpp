@@ -1,5 +1,6 @@
 #include "../lib/Server.hpp"
 #include "../lib/logging/Logger.hpp"
+#include <array>
 #include <cerrno>
 #include <cstring>
 #include <optional>
@@ -23,6 +24,12 @@ Server *Server::get_instance(void) noexcept {
 	return (Server::_instance);
 }
 
+const std::array<std::optional<Client>, 3> &Server::get_clients(
+    void
+) const noexcept {
+	return this->_clients;
+}
+
 Server::Server(const std::string &host, const std::string &port) noexcept(false)
     : _should_run(true), _epoll_fd(-1), _clients(), _listener() {
 	this->_listener = new Listener(this, host, port);
@@ -35,11 +42,6 @@ Server::~Server() noexcept(false) {
 	}
 	delete this->_listener;
 	return;
-}
-
-std::optional<Error> Server::add_new_client(Client &new_client) noexcept {
-	(void)new_client;
-	return (std::nullopt);
 }
 
 std::optional<Error> Server::listen_and_serve(
@@ -65,6 +67,65 @@ std::optional<Error> Server::listen_and_serve(
 	}
 	Info(start_message.c_str());
 	return (this->event_loop());
+}
+
+int Server::get_active_client_count(void) const noexcept {
+	int count = 0;
+	for (auto it : this->_clients) {
+		if (it.has_value()) {
+			count++;
+		}
+	}
+	return (count);
+}
+
+std::optional<Error> Server::add_new_client(Client &new_client) noexcept {
+	if (this->get_active_client_count() >= 3) {
+		return (std::optional<Error>("maximum number of clients reached"));
+	}
+	for (auto &it : this->_clients) {
+		if (!it.has_value()) {
+			it.emplace(new_client);
+			struct epoll_event client_events_of_interest =
+			    new_client.get_events_of_interest();
+			if (epoll_ctl(
+			        this->_epoll_fd, EPOLL_CTL_ADD, new_client.get_fd(),
+			        &client_events_of_interest
+			    ) == -1) {
+				Err("error on adding new client to epoll instance: %s",
+				    strerror(errno));
+				it.reset();
+				return (std::optional<Error>(strerror(errno)));
+			}
+			Info(
+			    "new client added, current active clients: %d",
+			    this->get_active_client_count()
+			);
+			return (std::nullopt);
+		}
+	}
+	return (std::nullopt);
+}
+
+std::optional<Error> Server::remove_client(int pos) noexcept {
+	if (pos < 0 || pos >= 3) {
+		return std::optional<Error>(
+		    "out of range position for deleting client"
+		);
+	}
+	auto marked_for_deletion = this->_clients.at(pos);
+	if (!marked_for_deletion.has_value()) {
+		return std::optional<Error>(
+		    "the position passed for deletion currently has no active Client"
+		);
+	}
+	if (epoll_ctl(
+	        this->_epoll_fd, EPOLL_CTL_DEL, marked_for_deletion->get_fd(), NULL
+	    ) == -1) {
+		Err("failed to delete Client at position %d: %s", pos, strerror(errno));
+	}
+	marked_for_deletion.reset();
+	return (std::nullopt);
 }
 
 std::optional<Error> Server::event_loop(void) noexcept {
