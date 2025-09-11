@@ -1,0 +1,200 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-o",
+      "obj/Client.o",
+      "src/Client.cpp"
+    ],
+    "directory": "/home/gsaiago/estudo/cpp/daemonize",
+    "file": "/home/gsaiago/estudo/cpp/daemonize/src/Client.cpp",
+    "output": "/home/gsaiago/estudo/cpp/daemonize/obj/Client.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-o",
+      "obj/DaemonManager.o",
+      "src/DaemonManager.cpp"
+    ],
+    "directory": "/home/gsaiago/estudo/cpp/daemonize",
+    "file": "/home/gsaiago/estudo/cpp/daemonize/src/DaemonManager.cpp",
+    "output": "/home/gsaiago/estudo/cpp/daemonize/obj/DaemonManager.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-o",
+      "obj/Listener.o",
+      "src/Listener.cpp"
+    ],
+    "directory": "/home/gsaiago/estudo/cpp/daemonize",
+    "file": "/home/gsaiago/estudo/cpp/daemonize/src/Listener.cpp",
+    "output": "/home/gsaiago/estudo/cpp/daemonize/obj/Listener.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-o",
+      "obj/Server.o",
+      "src/Server.cpp"
+    ],
+    "directory": "/home/gsaiago/estudo/cpp/daemonize",
+    "file": "/home/gsaiago/estudo/cpp/daemonize/src/Server.cpp",
+    "output": "/home/gsaiago/estudo/cpp/daemonize/obj/Server.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-o",
+      "obj/main.o",
+      "src/main.cpp"
+    ],
+    "directory": "/home/gsaiago/estudo/cpp/daemonize",
+    "file": "/home/gsaiago/estudo/cpp/daemonize/src/main.cpp",
+    "output": "/home/gsaiago/estudo/cpp/daemonize/obj/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-o",
+      "obj/logging/Logger.o",
+      "src/logging/Logger.cpp"
+    ],
+    "directory": "/home/gsaiago/estudo/cpp/daemonize",
+    "file": "/home/gsaiago/estudo/cpp/daemonize/src/logging/Logger.cpp",
+    "output": "/home/gsaiago/estudo/cpp/daemonize/obj/logging/Logger.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-o",
+      "obj/logging/SyslogHandler.o",
+      "src/logging/SyslogHandler.cpp"
+    ],
+    "directory": "/home/gsaiago/estudo/cpp/daemonize",
+    "file": "/home/gsaiago/estudo/cpp/daemonize/src/logging/SyslogHandler.cpp",
+    "output": "/home/gsaiago/estudo/cpp/daemonize/obj/logging/SyslogHandler.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-o",
+      "obj/logging/TinTinReporter.o",
+      "src/logging/TinTinReporter.cpp"
+    ],
+    "directory": "/home/gsaiago/estudo/cpp/daemonize",
+    "file": "/home/gsaiago/estudo/cpp/daemonize/src/logging/TinTinReporter.cpp",
+    "output": "/home/gsaiago/estudo/cpp/daemonize/obj/logging/TinTinReporter.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++17",
+      "-o",
+      "obj/logging/logging_utils.o",
+      "src/logging/logging_utils.cpp"
+    ],
+    "directory": "/home/gsaiago/estudo/cpp/daemonize",
+    "file": "/home/gsaiago/estudo/cpp/daemonize/src/logging/logging_utils.cpp",
+    "output": "/home/gsaiago/estudo/cpp/daemonize/obj/logging/logging_utils.o"
+  }
+]

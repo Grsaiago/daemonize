@@ -32,3 +32,6 @@
 *.app
 matt-daemon
 test_suite
+
+# clangd fiels
+.cache/
