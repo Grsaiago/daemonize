@@ -3,6 +3,7 @@
 #include "../lib/logging/Logger.hpp"
 #include "../lib/logging/TinTinReporter.hpp"
 #include "../lib/logging/LogFileHandler.hpp"
+#include <cstdlib>
 #include <exception>
 #include <memory>
 #include <new>

@@ -8,11 +8,13 @@
 class Client : public IPollable {
   public:
 	Client() = delete;
+	Client(const Client &cpy) = delete;
+
 	Client(int fd);
-	Client(const Client &cpy) = default;
+	Client(Client &&other) noexcept;
 	~Client();
 
-	Client &operator=(const Client &rhs) = default;
+	Client &operator=(const Client &rhs) = delete;
 
 	int                                get_fd(void) const noexcept override;
 	[[nodiscard]] std::optional<Error> handle_poll(

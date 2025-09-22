@@ -17,6 +17,7 @@ Listener::Listener(
     : _fd(-1), _server_instance(server_instance), _host(host), _port(port) {
 	struct sockaddr_storage addr;
 	socklen_t               addr_len;
+	int                     sockopt = 1;
 
 	this->_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_fd < 0) {
@@ -40,6 +41,7 @@ Listener::Listener(
 		addr_len = sizeof(struct sockaddr_in6);
 		break;
 	}
+	setsockopt(this->_fd, SOL_SOCKET, SO_REUSEADDR, &sockopt, sizeof(int));
 	if (bind(this->_fd, reinterpret_cast<struct sockaddr *>(&addr), addr_len) !=
 	    0) {
 		throw std::runtime_error(
@@ -53,8 +55,8 @@ Listener::Listener(
 Listener::~Listener() {
 	if (this->_fd != -1) {
 		close(this->_fd);
-		this->_fd = -1;
 	}
+	return;
 }
 
 bool Listener::resolve_addr(

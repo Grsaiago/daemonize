@@ -71,7 +71,7 @@ std::optional<Error> Server::listen_and_serve(
 
 int Server::get_active_client_count(void) const noexcept {
 	int count = 0;
-	for (auto it : this->_clients) {
+	for (auto &it : this->_clients) {
 		if (it.has_value()) {
 			count++;
 		}
@@ -84,25 +84,26 @@ std::optional<Error> Server::add_new_client(Client &new_client) noexcept {
 		return (std::optional<Error>("maximum number of clients reached"));
 	}
 	for (auto &it : this->_clients) {
-		if (!it.has_value()) {
-			it.emplace(new_client);
-			struct epoll_event client_events_of_interest =
-			    new_client.get_events_of_interest();
-			if (epoll_ctl(
-			        this->_epoll_fd, EPOLL_CTL_ADD, new_client.get_fd(),
-			        &client_events_of_interest
-			    ) == -1) {
-				Err("error on adding new client to epoll instance: %s",
-				    strerror(errno));
-				it.reset();
-				return (std::optional<Error>(strerror(errno)));
-			}
-			Info(
-			    "new client added, current active clients: %d",
-			    this->get_active_client_count()
-			);
-			return (std::nullopt);
+		if (it.has_value()) {
+			continue;
 		}
+		it.emplace(std::move(new_client));
+		struct epoll_event client_events_of_interest =
+		    it.value().get_events_of_interest();
+		if (epoll_ctl(
+		        this->_epoll_fd, EPOLL_CTL_ADD, it.value().get_fd(),
+		        &client_events_of_interest
+		    ) == -1) {
+			Err("error on adding new client to epoll instance: %s",
+			    strerror(errno));
+			it.reset();
+			return (std::optional<Error>(strerror(errno)));
+		}
+		Info(
+		    "new client added, current active clients: %d",
+		    this->get_active_client_count()
+		);
+		return (std::nullopt);
 	}
 	return (std::nullopt);
 }
@@ -113,7 +114,7 @@ std::optional<Error> Server::remove_client(int pos) noexcept {
 		    "out of range position for deleting client"
 		);
 	}
-	auto marked_for_deletion = this->_clients.at(pos);
+	std::optional<Client> &marked_for_deletion = this->_clients[pos];
 	if (!marked_for_deletion.has_value()) {
 		return std::optional<Error>(
 		    "the position passed for deletion currently has no active Client"
