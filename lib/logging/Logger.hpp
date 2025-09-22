@@ -3,22 +3,30 @@
 
 #include "LogHandler.hpp"
 #include "LogTypes.hpp"
-#include "logging_utils.hpp"
 #include <cstdarg>
+#include <ctime>
 #include <memory>
 #include <string>
 
 #define Debug(msg, ...)                                                        \
-	(Logger::debug(__FILE__, __LINE__, __func__, msg, ##__VA_ARGS__))
+	(Logger::debug(                                                            \
+	    std::time(0), __FILE__, __LINE__, __func__, msg, ##__VA_ARGS__         \
+	))
 
 #define Info(msg, ...)                                                         \
-	(Logger::info(__FILE__, __LINE__, __func__, msg, ##__VA_ARGS__))
+	(Logger::info(                                                             \
+	    std::time(0), __FILE__, __LINE__, __func__, msg, ##__VA_ARGS__         \
+	))
 
 #define Warn(msg, ...)                                                         \
-	(Logger::warn(__FILE__, __LINE__, __func__, msg, ##__VA_ARGS__))
+	(Logger::warn(                                                             \
+	    std::time(0), __FILE__, __LINE__, __func__, msg, ##__VA_ARGS__         \
+	))
 
 #define Err(msg, ...)                                                          \
-	(Logger::error(__FILE__, __LINE__, __func__, msg, ##__VA_ARGS__))
+	(Logger::error(                                                            \
+	    std::time(0), __FILE__, __LINE__, __func__, msg, ##__VA_ARGS__         \
+	))
 
 class Logger {
   public:
@@ -37,20 +45,20 @@ class Logger {
 	static std::unique_ptr<Logger> _instance;
 
 	static void debug(
-	    std::string file, unsigned int line, std::string caller,
-	    std::string message, ...
+	    time_t timestamp, std::string file, unsigned int line,
+	    std::string caller, std::string message, ...
 	) noexcept;
 	static void info(
-	    std::string file, unsigned int line, std::string caller,
-	    std::string message, ...
+	    time_t timestamp, std::string file, unsigned int line,
+	    std::string caller, std::string message, ...
 	) noexcept;
 	static void warn(
-	    std::string file, unsigned int line, std::string caller,
-	    std::string message, ...
+	    time_t timestamp, std::string file, unsigned int line,
+	    std::string caller, std::string message, ...
 	) noexcept;
 	static void error(
-	    std::string file, unsigned int line, std::string caller,
-	    std::string message, ...
+	    time_t timestamp, std::string file, unsigned int line,
+	    std::string caller, std::string message, ...
 	) noexcept;
 
   private:

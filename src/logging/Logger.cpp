@@ -1,4 +1,5 @@
 #include "../../lib/logging/Logger.hpp"
+#include "../../lib/logging/logging_utils.hpp"
 
 std::unique_ptr<Logger> Logger::_instance = nullptr;
 
@@ -25,7 +26,7 @@ void Logger::init_with_env_level(std::unique_ptr<LogHandler> handler) noexcept {
 }
 
 void Logger::debug(
-    std::string file, unsigned int line, std::string caller,
+    time_t timestamp, std::string file, unsigned int line, std::string caller,
     std::string message, ...
 ) noexcept {
 	va_list vlist;
@@ -39,6 +40,7 @@ void Logger::debug(
 	std::string formatted_message = get_formatted_message(message, vlist);
 	va_end(vlist);
 	struct LogEvent ev = {
+	    .timestamp = timestamp,
 	    .file = file,
 	    .line = line,
 	    .caller = caller,
@@ -50,7 +52,7 @@ void Logger::debug(
 }
 
 void Logger::info(
-    std::string file, unsigned int line, std::string caller,
+    time_t timestamp, std::string file, unsigned int line, std::string caller,
     std::string message, ...
 ) noexcept {
 	va_list vlist;
@@ -64,6 +66,7 @@ void Logger::info(
 	std::string formatted_message = get_formatted_message(message, vlist);
 	va_end(vlist);
 	struct LogEvent ev = {
+	    .timestamp = timestamp,
 	    .file = file,
 	    .line = line,
 	    .caller = caller,
@@ -75,7 +78,7 @@ void Logger::info(
 }
 
 void Logger::warn(
-    std::string file, unsigned int line, std::string caller,
+    time_t timestamp, std::string file, unsigned int line, std::string caller,
     std::string message, ...
 ) noexcept {
 	va_list vlist;
@@ -89,6 +92,7 @@ void Logger::warn(
 	std::string formatted_message = get_formatted_message(message, vlist);
 	va_end(vlist);
 	struct LogEvent ev = {
+	    .timestamp = timestamp,
 	    .file = file,
 	    .line = line,
 	    .caller = caller,
@@ -100,7 +104,7 @@ void Logger::warn(
 }
 
 void Logger::error(
-    std::string file, unsigned int line, std::string caller,
+    time_t timestamp, std::string file, unsigned int line, std::string caller,
     std::string message, ...
 ) noexcept {
 	va_list vlist;
@@ -114,6 +118,7 @@ void Logger::error(
 	std::string formatted_message = get_formatted_message(message, vlist);
 	va_end(vlist);
 	struct LogEvent ev = {
+	    .timestamp = timestamp,
 	    .file = file,
 	    .line = line,
 	    .caller = caller,
