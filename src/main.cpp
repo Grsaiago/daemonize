@@ -2,12 +2,13 @@
 #include "../lib/Server.hpp"
 #include "../lib/logging/Logger.hpp"
 #include "../lib/logging/TinTinReporter.hpp"
+#include "../lib/logging/LogFileHandler.hpp"
 #include <exception>
 #include <memory>
 #include <new>
 
 int main() {
-	Logger::init_with_level(LogLevel::INFO, std::make_unique<TinTinReporter>());
+	Logger::init_with_level(LogLevel::INFO, std::make_unique<LogFileHandler>("/var/log/matt_daemon.log"));
 	std::string                    host = "0.0.0.0";
 	std::string                    port = "4242";
 	Server                        *server = nullptr;
@@ -23,6 +24,7 @@ int main() {
 
 	Info("Essa string aqui");
 
+	return EXIT_SUCCESS;
 	std::string message = "Starting server on " + host + ":" + port;
 	if (auto result = server->listen_and_serve(message); result.has_value()) {
 		Err("failed to start server: %s", result.value().reason.c_str());
