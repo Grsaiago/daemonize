@@ -2,17 +2,20 @@
 #include "../lib/logging/Logger.hpp"
 #include <array>
 #include <cerrno>
+#include <csignal>
 #include <cstring>
 #include <optional>
 #include <sys/epoll.h>
+
+static void signal_handler(int signum) noexcept;
 
 Server *Server::_instance = nullptr;
 
 Server *Server::install_new_default_server(
     const std::string &host, const std::string &port
-) noexcept {
+) {
 	if (Server::_instance == nullptr) {
-		Server::_instance = new (std::nothrow) Server(host, port);
+		Server::_instance = new Server(host, port);
 	}
 	return (Server::_instance);
 }
@@ -129,6 +132,16 @@ std::optional<Error> Server::remove_client(int pos) noexcept {
 	return (std::nullopt);
 }
 
+void Server::install_signal_handlers() noexcept {
+	std::signal(SIGTERM, signal_handler);
+	return;
+}
+
+void Server::set_should_run(bool val) noexcept {
+	this->_should_run = val;
+	return;
+}
+
 std::optional<Error> Server::event_loop(void) noexcept {
 	int                  ev_count = 0;
 	struct epoll_event  *ev = nullptr;
@@ -161,4 +174,16 @@ std::optional<Error> Server::event_loop(void) noexcept {
 		}
 	}
 	return (std::nullopt);
+}
+
+static void signal_handler(int signum) noexcept {
+	switch (signum) {
+	case (SIGTERM):
+		Server::get_instance()->set_should_run(false);
+		Info("received SIGTERM, starting graceful shutdown");
+		break;
+	default:
+		Err("received unexpected signal %s", strsignal(signum));
+	}
+	return;
 }

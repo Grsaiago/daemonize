@@ -26,7 +26,7 @@ class Server {
 
 	static Server *install_new_default_server(
 	    const std::string &host, const std::string &port
-	) noexcept;
+	);
 	[[nodiscard]] std::optional<Error> listen_and_serve(
 	    std::string &start_message
 	) noexcept;
@@ -35,6 +35,9 @@ class Server {
 	    Client &new_client
 	) noexcept;
 	[[nodiscard]] std::optional<Error> remove_client(int pos) noexcept;
+	void                               install_signal_handlers() noexcept;
+
+	void set_should_run(bool val) noexcept;
 
   private:
 	Server(const std::string &host, const std::string &port) noexcept(false);
