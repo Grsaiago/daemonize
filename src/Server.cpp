@@ -102,7 +102,7 @@ std::optional<Error> Server::add_new_client(Client &new_client) noexcept {
 			it.reset();
 			return (std::optional<Error>(strerror(errno)));
 		}
-		Info(
+		Debug(
 		    "new client added, current active clients: %d",
 		    this->get_active_client_count()
 		);
@@ -148,7 +148,7 @@ std::optional<Error> Server::event_loop(void) noexcept {
 	std::optional<Error> err;
 
 	while (this->_should_run) {
-		Info("checking/waiting for new events");
+		Debug("checking/waiting for new events");
 		ev_count = epoll_wait(
 		    this->_epoll_fd, this->_pollables.data(), this->_pollables.size(),
 		    -1
@@ -160,11 +160,11 @@ std::optional<Error> Server::event_loop(void) noexcept {
 			Err("error on checking/waiting for new events", strerror(errno));
 			return (std::optional<Error>(strerror(errno)));
 		}
-		Info("new events received, starting handle loop");
+		Debug("new events received, starting handle loop");
 		for (int i = 0; i < ev_count; i++) {
 			ev = &this->_pollables[i];
 
-			Info("handling event on position [%d]", i);
+			Debug("handling event on position [%d]", i);
 			err = reinterpret_cast<IPollable *>(ev->data.ptr)->handle_poll(*ev);
 			if (err.has_value()) {
 				Err("error calling handle_poll in epoll_event: %s",

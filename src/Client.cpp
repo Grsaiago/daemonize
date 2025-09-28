@@ -31,7 +31,7 @@ std::optional<Error> Client::handle_poll(struct epoll_event ev) noexcept {
 			return (std::optional<Error>("failed to remove client"));
 		}
 	} else if (ev.events & (EPOLLIN)) {
-		Info("a client is ready to read");
+		Debug("a client is ready to read");
 		memset(read_buffer, 0, sizeof(read_buffer));
 		user_message.clear();
 		while (true) {
