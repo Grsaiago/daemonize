@@ -35,3 +35,6 @@ test_suite
 
 # clangd fiels
 .cache/
+
+# codecompanion files
+codecompanion-workspace.json
