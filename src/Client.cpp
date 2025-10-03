@@ -70,6 +70,14 @@ std::optional<Error> Client::handle_poll(struct epoll_event ev) noexcept {
 				}
 			}
 		}
+		if (user_message[user_message.length() - 1] == '\n') {
+			user_message.pop_back();
+		}
+		if (user_message == "quit") {
+			Info("Client requested quit");
+			server->set_should_run(false);
+			return (std::nullopt);
+		}
 		Info(user_message.c_str());
 	}
 	return (std::nullopt);

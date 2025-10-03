@@ -173,6 +173,7 @@ std::optional<Error> Server::event_loop(void) noexcept {
 			}
 		}
 	}
+	Info("Shutting down server gracefully");
 	return (std::nullopt);
 }
 
