@@ -30,7 +30,11 @@
 
 class Logger {
   public:
+	Logger() = delete;
+	Logger(const Logger &cpy) = delete;
 	~Logger();
+	Logger &operator=(const Logger &rhs) = delete;
+
 	static void init_with_level(
 	    LogLevel level, std::unique_ptr<LogHandler> handler
 	) noexcept;
