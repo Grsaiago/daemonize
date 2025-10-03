@@ -15,8 +15,10 @@ Server *Server::_instance = nullptr;
 Server *Server::install_new_default_server(
     const std::string &host, const std::string &port
 ) {
+	Info("Creating server.");
 	if (Server::_instance == nullptr) {
 		Server::_instance = new Server(host, port);
+		Info("Server created.");
 	}
 	return (Server::_instance);
 }
@@ -181,8 +183,8 @@ std::optional<Error> Server::event_loop(void) noexcept {
 static void signal_handler(int signum) noexcept {
 	switch (signum) {
 	case (SIGTERM):
-		Server::get_instance()->set_should_run(false);
 		Info("received SIGTERM, starting graceful shutdown");
+		Server::get_instance()->set_should_run(false);
 		break;
 	default:
 		Err("received unexpected signal %s", strsignal(signum));

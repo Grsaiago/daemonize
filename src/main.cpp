@@ -13,6 +13,7 @@ int main() {
 	    LogLevel::INFO,
 	    std::make_unique<LogFileHandler>("/var/log/matt_daemon/matt_daemon.log")
 	);
+	Info("Started.");
 	std::string                    host = "0.0.0.0";
 	std::string                    port = "4242";
 	Server                        *server = nullptr;
@@ -20,13 +21,13 @@ int main() {
 
 	try {
 		daemon_manager = std::make_unique<DaemonManager>();
+		Info("Entering Daemon mode.");
+		Info("started. PID: %d", getpid());
 		server = Server::install_new_default_server(host, port);
 	} catch (std::exception &err) {
 		Err(err.what());
 		return EXIT_FAILURE;
 	}
-
-	Info("Essa string aqui");
 
 	std::string message = "Starting server on " + host + ":" + port;
 	if (auto result = server->listen_and_serve(message); result.has_value()) {
