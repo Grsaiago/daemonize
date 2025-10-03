@@ -46,3 +46,7 @@ $(TEST_NAME): $(OBJS) $(TESTS)
 .PHONY: test
 test: $(TEST_NAME) ## Compiles and run the tests
 	$(TEST_DIR)/$(TEST_NAME)
+
+.PHONY: del-lock
+del-lock: ## Delete the lockfile at /var/lock/matt_daemon.lock
+	@rm -f /var/lock/matt_daemon.lock
