@@ -24,7 +24,7 @@ std::optional<Error> Client::handle_poll(struct epoll_event ev) noexcept {
 	std::string user_message;
 
 	if (ev.events & (EPOLLRDHUP)) {
-		Info("a client disconected");
+		Debug("a client disconected");
 		auto err = server->remove_client(this->get_position());
 		if (err.has_value()) {
 			Err("failed to remove client: %s", err->reason.c_str());
@@ -74,11 +74,11 @@ std::optional<Error> Client::handle_poll(struct epoll_event ev) noexcept {
 			user_message.pop_back();
 		}
 		if (user_message == "quit") {
-			Info("Client requested quit");
+			Info("%s: Client requested quit", "user input");
 			server->set_should_run(false);
 			return (std::nullopt);
 		}
-		Info(user_message.c_str());
+		Info("user input %s", user_message.c_str());
 	}
 	return (std::nullopt);
 }

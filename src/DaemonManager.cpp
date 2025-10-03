@@ -21,8 +21,10 @@ DaemonManager::DaemonManager() noexcept(false) {
 DaemonManager::~DaemonManager() noexcept(false) {
 	auto result = this->close_lockfile();
 	if (result.has_value()) {
+		Err(result.value().reason.c_str());
 		throw std::logic_error(result.value().reason);
 	}
+	Info("lockfile deleted successfully");
 }
 
 std::optional<Error> DaemonManager::open_lockfile() {
