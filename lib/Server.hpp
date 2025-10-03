@@ -31,9 +31,7 @@ class Server {
 	    std::string &start_message
 	) noexcept;
 	[[nodiscard]] int get_active_client_count(void) const noexcept;
-	[[nodiscard]] std::optional<Error> add_new_client(
-	    Client &new_client
-	) noexcept;
+	[[nodiscard]] std::optional<Error> add_new_client(int new_client) noexcept;
 	[[nodiscard]] std::optional<Error> remove_client(int pos) noexcept;
 	void                               install_signal_handlers() noexcept;
 

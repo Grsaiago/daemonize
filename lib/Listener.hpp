@@ -33,7 +33,7 @@ class Listener : public IPollable {
 	) noexcept;
 
 	[[nodiscard]] std::optional<Error> listen(void) noexcept;
-	[[nodiscard]] Client              *accept_new_client(void) noexcept;
+	[[nodiscard]] int                  accept_new_client(void) noexcept;
 
   protected:
 	int         _fd;

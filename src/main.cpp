@@ -32,6 +32,7 @@ int main() {
 	if (auto result = server->listen_and_serve(message); result.has_value()) {
 		Err("failed to start server: %s", result.value().reason.c_str());
 		delete server;
+		return EXIT_FAILURE;
 	}
 	delete server;
 	return EXIT_SUCCESS;

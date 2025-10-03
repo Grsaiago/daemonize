@@ -3,6 +3,7 @@
 #include <array>
 #include <cerrno>
 #include <csignal>
+#include <cstdio>
 #include <cstring>
 #include <optional>
 #include <sys/epoll.h>
@@ -82,7 +83,7 @@ int Server::get_active_client_count(void) const noexcept {
 	return (count);
 }
 
-std::optional<Error> Server::add_new_client(Client &new_client) noexcept {
+std::optional<Error> Server::add_new_client(int new_client) noexcept {
 	if (this->get_active_client_count() >= 3) {
 		return (std::optional<Error>("maximum number of clients reached"));
 	}
@@ -90,7 +91,7 @@ std::optional<Error> Server::add_new_client(Client &new_client) noexcept {
 		if (it.has_value()) {
 			continue;
 		}
-		it.emplace(std::move(new_client));
+		it.emplace(new_client);
 		struct epoll_event client_events_of_interest =
 		    it.value().get_events_of_interest();
 		if (epoll_ctl(
