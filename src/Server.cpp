@@ -1,5 +1,6 @@
 #include "../lib/Server.hpp"
 #include "../lib/logging/Logger.hpp"
+#include "../lib/DaemonManager.hpp"
 #include <array>
 #include <cerrno>
 #include <csignal>
@@ -7,6 +8,7 @@
 #include <cstring>
 #include <optional>
 #include <sys/epoll.h>
+#include <unistd.h>
 
 static void signal_handler(int signum) noexcept;
 
@@ -151,7 +153,7 @@ std::optional<Error> Server::event_loop(void) noexcept {
 	struct epoll_event  *ev = nullptr;
 	std::optional<Error> err;
 
-	while (this->_should_run) {
+	while (this->_should_run && DaemonManager::lockfile_exists()) {
 		Debug("checking/waiting for new events");
 		ev_count = epoll_wait(
 		    this->_epoll_fd, this->_pollables.data(), this->_pollables.size(),
@@ -176,6 +178,9 @@ std::optional<Error> Server::event_loop(void) noexcept {
 				return (err);
 			}
 		}
+	}
+	if (!DaemonManager::lockfile_exists()) {
+		Info("Lockfile deleted");
 	}
 	Info("Shutting down server gracefully");
 	return (std::nullopt);
