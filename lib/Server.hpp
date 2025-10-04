@@ -38,6 +38,7 @@ class Server {
 	void set_should_run(bool val) noexcept;
 
   private:
+	Server() = delete;
 	Server(const std::string &host, const std::string &port) noexcept(false);
 	Server(const Server &cpy) noexcept(false) = delete;
 	Server &operator=(const Server &rhs) = delete;

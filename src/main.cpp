@@ -5,14 +5,29 @@
 #include "../lib/logging/TinTinReporter.hpp"
 #include <cstdlib>
 #include <exception>
+#include <iostream>
 #include <memory>
 #include <new>
 
 int main() {
-	Logger::init_with_level(
-	    LogLevel::INFO,
-	    std::make_unique<LogFileHandler>("/var/log/matt_daemon/matt_daemon.log")
-	);
+	try {
+		Logger::init_with_level(
+		    LogLevel::INFO, std::make_unique<LogFileHandler>(
+		                        "/var/log/matt_daemon/matt_daemon.log"
+		                    )
+		);
+	} catch (std::exception &err) {
+		std::cerr << "Error: Unable to initialize logger: " << err.what()
+		          << std::endl;
+		std::cerr << "Please ensure:" << std::endl;
+		std::cerr << "1. Directory /var/log/matt_daemon/ exists" << std::endl;
+		std::cerr << "2. You have write permissions to /var/log/matt_daemon/"
+		          << std::endl;
+		std::cerr << "3. Run with sudo if necessary" << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	Info("Started.");
 	std::string                    host = "0.0.0.0";
 	std::string                    port = "4242";
 	Server                        *server = nullptr;
@@ -20,13 +35,13 @@ int main() {
 
 	try {
 		daemon_manager = std::make_unique<DaemonManager>();
+		Info("Entering Daemon mode.");
+		Info("started. PID: %d", getpid());
 		server = Server::install_new_default_server(host, port);
 	} catch (std::exception &err) {
 		Err(err.what());
 		return EXIT_FAILURE;
 	}
-
-	Info("Essa string aqui");
 
 	std::string message = "Starting server on " + host + ":" + port;
 	if (auto result = server->listen_and_serve(message); result.has_value()) {

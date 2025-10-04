@@ -42,8 +42,20 @@ std::optional<Error> Client::handle_poll(struct epoll_event ev) noexcept {
 				if (bytes_read <
 				    static_cast<ssize_t>(sizeof(read_buffer) - 1)) {
 					break;
-				} else if (bytes_read == 0) {
-					Info("client disconnected");
+				}
+			} else if (bytes_read == 0) {
+				Info("client disconnected");
+				auto err = server->remove_client(this->get_position());
+				if (err.has_value()) {
+					Err("failed to remove client: %s", err->reason.c_str());
+					return (std::optional<Error>("failed to remove client"));
+				}
+				return (std::nullopt);
+			} else {
+				if (errno == EAGAIN || errno == EWOULDBLOCK) {
+					break;
+				} else {
+					Err("recv failed: %s", strerror(errno));
 					auto err = server->remove_client(this->get_position());
 					if (err.has_value()) {
 						Err("failed to remove client: %s", err->reason.c_str());
@@ -52,21 +64,6 @@ std::optional<Error> Client::handle_poll(struct epoll_event ev) noexcept {
 						);
 					}
 					return (std::nullopt);
-				} else {
-					if (errno == EAGAIN || errno == EWOULDBLOCK) {
-						break;
-					} else {
-						Err("recv failed: %s", strerror(errno));
-						auto err = server->remove_client(this->get_position());
-						if (err.has_value()) {
-							Err("failed to remove client: %s",
-							    err->reason.c_str());
-							return (
-							    std::optional<Error>("failed to remove client")
-							);
-						}
-						return (std::nullopt);
-					}
 				}
 			}
 		}
@@ -86,9 +83,10 @@ std::optional<Error> Client::handle_poll(struct epoll_event ev) noexcept {
 int Client::get_position() const noexcept {
 	auto server = Server::get_instance();
 	for (auto i = 0; i < 3; i++) {
-		if (this->get_fd() == server->get_clients().at(i)->_fd) {
+		if (server->get_clients().at(i).has_value() &&
+		    this->get_fd() == server->get_clients().at(i)->get_fd()) {
+			return (i);
 		}
-		return (i);
 	}
 	return (-1);
 }
