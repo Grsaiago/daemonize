@@ -35,7 +35,11 @@ int main() {
 
 	try {
 		daemon_manager = std::make_unique<DaemonManager>();
-		Info("Entering Daemon mode.");
+		auto err = daemon_manager->daemonize();
+		if (err.has_value()) {
+			Err("failed to daemonize: %s", err.value().reason.c_str());
+			return EXIT_FAILURE;
+		}
 		Info("started. PID: %d", getpid());
 		server = Server::install_new_default_server(host, port);
 	} catch (std::exception &err) {
@@ -43,7 +47,7 @@ int main() {
 		return EXIT_FAILURE;
 	}
 
-	std::string message = "Starting server on " + host + ":" + port;
+	std::string message = "Starting server with pid [" + std::to_string(getpid()) + "] on " + host + ":" + port ;
 	if (auto result = server->listen_and_serve(message); result.has_value()) {
 		Err("failed to start server: %s", result.value().reason.c_str());
 		delete server;
