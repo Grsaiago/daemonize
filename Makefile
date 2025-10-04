@@ -2,7 +2,7 @@ CC = g++
 CFLAGS = -g -Wall -Wextra -Werror --std=c++17
 CRITERION_LINK = -lcriterion
 
-NAME = matt-daemon
+NAME = Matt-daemon
 TEST_NAME = test_suite
 
 SRC_DIR = src
