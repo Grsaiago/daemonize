@@ -157,7 +157,7 @@ std::optional<Error> Server::event_loop(void) noexcept {
 		Debug("checking/waiting for new events");
 		ev_count = epoll_wait(
 		    this->_epoll_fd, this->_pollables.data(), this->_pollables.size(),
-		    -1
+		    0
 		);
 		if (ev_count == -1) {
 			if (errno == EINTR) {
